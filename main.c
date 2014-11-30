@@ -3,6 +3,12 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "graph.h"
+
+
+/**
+ * Trim/Strip function
+ */
 char *strstrip(char *s) {
     size_t size;
     char *end;
@@ -26,14 +32,20 @@ char *strstrip(char *s) {
     return s;
 }
 
-void *input (char *file) {
+
+/**
+ * Create a graph structure from an input file.
+ */
+graph_t *parse_input_file (char *file) {
     FILE *fp;
     char line[1024];
     char *token;
 
-    int vertices, edges;
+    int vertices;
     int i = 0;
     int edge[2], weight;
+
+    graph_t *graph;
 
     fp = fopen(file, "r");
     if (fp != NULL) {
@@ -42,8 +54,7 @@ void *input (char *file) {
                 token = strtok(strstrip(line), " ");
                 vertices = atoi(token);
 
-                token = strtok(NULL, " ");
-                edges = atoi(token);
+                graph = createGraph(vertices);
             }
             else {
                 token = strtok(strstrip(line), " ");
@@ -54,22 +65,19 @@ void *input (char *file) {
 
                 token = strtok(NULL, " ");
                 weight = atoi(token);
+
+                addEdge(graph, edge[0], edge[1], weight);
             }
             i++;
         }
         fclose(fp);
     }
     else {
-        return NULL;
+        fprintf(stderr, "Unable to open input file.\n");
+        exit(EXIT_FAILURE);
     }
 
-    printf("%d\n", vertices);
-    printf("%d\n\n", edges);
-    printf("%d\n", edge[0]);
-    printf("%d\n", edge[1]);
-    printf("%d\n", weight);
-
-    return NULL;
+    return graph;
 }
 
 int main(int argc, char **argv) {
@@ -80,7 +88,11 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    input(argv[1]);
+    graph_t *graph = parse_input_file(argv[1]);
+
+    printGraph(graph);
+
+    freeGraph(graph);
 
     exit(EXIT_SUCCESS);
 }
