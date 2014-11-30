@@ -1,16 +1,13 @@
-CC=gcc -g -Wall -Wextra
+CC?=gcc -g -Wall -Wextra
+CFLAGS?=-std=c99
 
-SOURCES=main.c graph.c
-OBJECTS=$(SOURCES:.c=.o)
-EXECTUABLE=a.out
+SOURCES=graph.c main.c
+EXECUTABLE=a.out
 
 all: $(SOURCES) $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@
-
-.c.o:
-	$(CC) $(CFLAGS) $< -o $@
+$(EXECUTABLE): $(SOURCES)
+	$(CC) $(CFLAGS) $(SOURCES)
 
 clean:
-	rm -rf $(OBJECTS) $(EXECUTABLE)
+	rm -rf $(EXECUTABLE)

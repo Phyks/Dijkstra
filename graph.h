@@ -4,7 +4,7 @@
 typedef struct adjacency_list_node {
     int vertex;  // Other end of the edge
     int weight;  // Weight of the edge
-    struct adjlist_node *next;  // Pointer to next item in the adjacency linked list
+    struct adjacency_list_node *next;  // Pointer to next item in the adjacency linked list
 } adjacency_list_node_t;
 
 typedef struct adjacency_list {
