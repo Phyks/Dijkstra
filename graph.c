@@ -65,6 +65,7 @@ void addEdge(graph_t *graph, int src, int dest, int weight) {
         exit(EXIT_FAILURE);
     }
     newNode->vertex = dest;
+    newNode->weight = weight;
 
     // Add it in place of the head of the list
     newNode->next = graph->adjacency_list_array[src].head;
@@ -82,7 +83,7 @@ void printGraph(graph_t *graph) {
         adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
         printf("\n%d: ", i);
         while (adjacency_list_item) {
-            printf("%d (%d)->", adjacency_list_item->vertex, adjacency_list_item->weight);
+            printf("%d (%d) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
             adjacency_list_item = adjacency_list_item->next;
         }
         printf("NULL\n");
