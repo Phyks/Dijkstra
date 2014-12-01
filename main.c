@@ -83,7 +83,7 @@ graph_t *parse_input_file (char *file) {
 int main(int argc, char **argv) {
     if (argc < 2) {
         fprintf(stderr, "No input graph.\n\nUsage:\n\t");
-        fprintf(stderr, "%s\n", argv[0]);
+        fprintf(stderr, "%s", argv[0]);
         fprintf(stderr, " graph\n");
         exit(EXIT_FAILURE);
     }
