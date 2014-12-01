@@ -23,12 +23,12 @@ typedef struct graph {
 
 graph_t *createGraph(int n);
 void freeGraph(graph_t *graph);
+int *getNodes(graph_t const *graph);
 void addEdge(graph_t *graph, int src, int dest, int weight);
-void printGraph(graph_t *graph);
+void printGraph(graph_t const *graph);
 
-graph_t *reverseGraph(graph_t *graph);
-void dfs (graph_t *graph, int *d, int *pi, int *f);
-void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *pi, int *f);
-bool isConnected(graph_t *graph);
+graph_t *reverseGraph(graph_t const *graph);
+void dfs (graph_t const *graph, int *d, int *pi, int *f, int const *nodes);
+bool isConnected(graph_t const *graph);
 
 #endif  // _GRAPH_H_

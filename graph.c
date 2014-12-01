@@ -58,6 +58,20 @@ void freeGraph(graph_t *graph) {
 
 
 /**
+ * Get the nodes in a graph.
+ */
+int *getNodes(graph_t const *graph) {
+  int *nodes = malloc(sizeof(int) * graph->nb_vertices);
+
+  for (int i = 0; i < graph->nb_vertices; i++) {
+    nodes[i] = i;
+  }
+
+  return nodes;
+}
+
+
+/**
  * Add an edge to a graph.
  */
 void addEdge(graph_t *graph, int src, int dest, int weight) {
@@ -81,7 +95,7 @@ void addEdge(graph_t *graph, int src, int dest, int weight) {
 /**
  * Pretty print
  */
-void printGraph(graph_t *graph) {
+void printGraph(graph_t const *graph) {
   for (int i = 0; i < graph->nb_vertices; i++) {
     adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
     printf("\n%d: ", i);
@@ -97,7 +111,7 @@ void printGraph(graph_t *graph) {
 /**
  * Reverse a graph
  */
-graph_t *reverseGraph(graph_t *graph) {
+graph_t *reverseGraph(graph_t const *graph) {
   graph_t *reversed_graph = createGraph(graph->nb_vertices);
 
   for (int i = 0; i < graph->nb_vertices; i++) {
@@ -114,8 +128,27 @@ graph_t *reverseGraph(graph_t *graph) {
 
 /**
  * Do a DFS starting from specified node.
+ *
+ * Note: nodes param is here to specify the order of iteration in the main loop.
  */
-void dfs (graph_t *graph, int *d, int *pi, int *f) {
+static void dfsVisit(graph_t const *graph, int u, states_t *states, int *date, int *d, int *pi, int *f) {
+  markNode(states, u, VISITING);
+  (*date)++;
+
+  d[u] = *date;
+
+  for (int v = 0; v < graph->adjacency_list_array[u].nb_members; v++) {
+    if (isState(states, v, NOT_VISITED)) {
+      pi[v] = u;
+      dfsVisit(graph, v, states, date, d, pi, f);
+    }
+  }
+
+  markNode(states, u, VISITED);
+  (*date)++;
+  f[u] = *date;
+}
+void dfs (graph_t const *graph, int *d, int *pi, int *f, int const *nodes) {
   int date = 0;
   states_t *states = initStates(graph);  // Set all nodes to not visited
 
@@ -140,8 +173,8 @@ void dfs (graph_t *graph, int *d, int *pi, int *f) {
   }
 
   for (int u = 0; u < graph->nb_vertices; u++) {
-    if (isState(states, u, NOT_VISITED)) {
-      dfsVisit(graph, u, states, &date, d, pi, f);
+    if (isState(states, nodes[u], NOT_VISITED)) {
+      dfsVisit(graph, nodes[u], states, &date, d, pi, f);
     }
   }
 
@@ -150,43 +183,45 @@ void dfs (graph_t *graph, int *d, int *pi, int *f) {
 
 
 /**
- * Auxiliary DFS function.
+ * Check whether the graph is connected or not.
  */
-void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *pi, int *f) {
-  markNode(states, u, VISITING);
-  (*date)++;
+static int compare_int_desc(void const *a, void const *b) {
+   int const *pa = a;
+   int const *pb = b;
 
-  d[u] = *date;
+   return *pb - *pa;
+}
+static int count(int *array, int nb_items, int value) {
+  int nb = 0;
 
-  for (int v = 0; v < graph->adjacency_list_array[u].nb_members; v++) {
-    if (isState(states, v, NOT_VISITED)) {
-      pi[v] = u;
-      dfsVisit(graph, v, states, date, d, pi, f);
+  for (int i = 0; i < nb_items; i++) {
+    if (array[i] == value) {
+      nb++;
     }
   }
 
-  markNode(states, u, VISITED);
-  (*date)++;
-  f[u] = *date;
+  return nb;
 }
-
-
-/**
- * Check whether the graph is connected or not.
- */
-bool isConnected(graph_t *graph) {
+bool isConnected(graph_t const *graph) {
   int *d = NULL, *pi = NULL, *f = NULL;
-  dfs(graph, d, pi, f);
+
+  dfs(graph, d, pi, f, getNodes(graph));
+  free(pi);
+  free(d);
 
   graph_t *reversed_graph = reverseGraph(graph);
 
-  dfs(reversed_graph, d, pi, f); // TODO - Treat it in decreasing order of f
+  int *fR = NULL;
+  qsort(f, graph->nb_vertices, sizeof(int), compare_int_desc);
+  dfs(reversed_graph, d, pi, fR, f);
 
   freeGraph(reversed_graph);
-  free(pi);
   free(f);
+  free(fR);
+  free(d);
 
-  // TODO : Correct return
+  int nb = count(pi, graph->nb_vertices, -1);
+  free(pi);
 
-  return true;
+  return nb == 1;
 }
