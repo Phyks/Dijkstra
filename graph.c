@@ -118,6 +118,7 @@ graph_t *reverseGraph(graph_t *graph) {
  * @todo
  */
 int dfs (graph_t *graph, int s, int current_time) {
+    /*
     // Mark node s
     graph->adjacency_list_array[u].visited = true;
 
@@ -132,6 +133,7 @@ int dfs (graph_t *graph, int s, int current_time) {
     }
 
     graph->adjacency_list_array[u].end_time = current_time;
+    */
 
     return current_time + 1;
 }
@@ -142,6 +144,7 @@ int dfs (graph_t *graph, int s, int current_time) {
  * @todo
  */
 bool isConnected(graph_t *graph) {
+    /*
     graph_t *reversed_graph = reverseGraph(graph);
 
     resetVisited(reversed_graph);
@@ -151,4 +154,5 @@ bool isConnected(graph_t *graph) {
     }
 
     freeGraph(reversed_graph);
+    */
 }
