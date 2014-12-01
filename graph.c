@@ -155,4 +155,5 @@ bool isConnected(graph_t *graph) {
 
     freeGraph(reversed_graph);
     */
+    return true;
 }
