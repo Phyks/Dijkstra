@@ -1,7 +1,8 @@
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
-
 #include <stdbool.h>
+
+#include "states.h"
 
 typedef struct adjacency_list_node {  // Represents edges between nodes
   int vertex;  // Other end of the edge
@@ -19,22 +20,15 @@ typedef struct graph {
   adjacency_list_t *adjacency_list_array;  // An array of adjacency lists
 } graph_t;
 
-typedef struct seen {
-  int nb_members;
-  int* vertices;
-} seen_t;
-
 
 graph_t *createGraph(int n);
 void freeGraph(graph_t *graph);
 void addEdge(graph_t *graph, int src, int dest, int weight);
 void printGraph(graph_t *graph);
 
-void mark_seen(seen_t *seen, int v);
-int is_seen(seen_t* seen, int v);
-
 graph_t *reverseGraph(graph_t *graph);
-int dfs (graph_t *graph, int s, int current_time);
+void dfs (graph_t *graph, int *d, int *pi, int *f);
+void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *pi, int *f);
 bool isConnected(graph_t *graph);
 
 #endif  // _GRAPH_H_

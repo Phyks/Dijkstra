@@ -1,7 +1,7 @@
 CC?=gcc -g -Wall -Wextra
 CFLAGS?=-std=c99 -Wall
 
-SOURCES=graph.c main.c dijkstra.c queue.c
+SOURCES=graph.c main.c dijkstra.c queue.c states.c
 EXECUTABLE=a.out
 
 all: $(SOURCES) $(EXECUTABLE)

@@ -112,72 +112,80 @@ graph_t *reverseGraph(graph_t *graph) {
 
 
 /**
- * Mark a node as seen.
+ * Do a DFS starting from specified node.
  */
-void mark_seen(seen_t *seen, int v) {
-  seen->nb_members++;
-  seen->vertices = (int*)realloc(seen, sizeof((int)seen->nb_members));
-  seen->vertices[seen->nb_members] = v;
-}
+void dfs (graph_t *graph, int *d, int *pi, int *f) {
+  int date = 0;
+  states_t *states = initStates(graph);  // Set all nodes to not visited
 
+  pi = (int *) malloc(sizeof(int) * graph->nb_vertices);
+  if (pi == NULL) {
+    fprintf(stderr, "Unable to allocate memory to store parent informations.\n");
+    exit(EXIT_FAILURE);
+  }
+  f = (int *) malloc(sizeof(int) * graph->nb_vertices);
+  if (f == NULL) {
+    fprintf(stderr, "Unable to allocate memory to store discovery dates.\n");
+    exit(EXIT_FAILURE);
+  }
+  d = (int *) malloc(sizeof(int) * graph->nb_vertices);
+  if (f == NULL) {
+    fprintf(stderr, "Unable to allocate memory to store ending dates.\n");
+    exit(EXIT_FAILURE);
+  }
 
-/**
- * Check if node is already seen.
- */
-int is_seen(seen_t* seen, int v) {
-  for (int i = 0; i < seen->nb_members; i++) {
-    if (seen->vertices[i] == v) {
-      return 1;
+  for (int u = 0; u < graph->nb_vertices; u++) {
+    pi[u] = -1;
+  }
+
+  for (int u = 0; u < graph->nb_vertices; u++) {
+    if (isState(states, u, NOT_VISITED)) {
+      dfsVisit(graph, u, states, &date, d, pi, f);
     }
   }
-  return 0;
+
+  freeStates(states);
 }
 
 
-
 /**
- * Do a DFS starting from specified node.
- *
- * @return End time.
- * @todo
+ * Auxiliary DFS function.
  */
-int dfs (graph_t *graph, int s, int current_time) {
-  /*
-  // Mark node s
-  graph->adjacency_list_array[u].visited = true;
+void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *pi, int *f) {
+  markNode(states, u, VISITING);
+  (*date)++;
 
-  // For all the neighbours
-  adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
-  while (adjacency_list_item != NULL) {
-  // If not marked
-  if (graph->adjacency_list_array[adjacency_list_item->vertex].visited == true) {
-  current_time = dfs(graph, adjacency_list_item->vertex, current_time);
-  }
-  adjacency_list_item = adjacency_list_item->next;
+  d[u] = *date;
+
+  for (int v = 0; v < graph->adjacency_list_array[u].nb_members; v++) {
+    if (isState(states, v, NOT_VISITED)) {
+      pi[v] = u;
+      dfsVisit(graph, v, states, date, d, pi, f);
+    }
   }
 
-  graph->adjacency_list_array[u].end_time = current_time;
-  */
-
-  return current_time + 1;
+  markNode(states, u, VISITED);
+  (*date)++;
+  f[u] = *date;
 }
 
 
 /**
  * Check whether the graph is connected or not.
- * @todo
  */
 bool isConnected(graph_t *graph) {
-  /*
-     graph_t *reversed_graph = reverseGraph(graph);
+  int *d, *pi, *f;
+  dfs(graph, d, pi, f);
 
-     resetVisited(reversed_graph);
-     dsf(reversed_graph, 0, 1);
-     while (findNotVisited(graph) != -1) {
-     dsf()
-     }
+  graph_t *reversed_graph = reverseGraph(graph);
 
-     freeGraph(reversed_graph);
-     */
+  dfs(reversed_graph, d, pi, f); // TODO - Treat it in decreasing order of f
+
+  freeGraph(reversed_graph);
+  free(pi);
+  free(f);
+
+  // TODO : Correct return
+
   return true;
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "dijkstra.h"
 #include "queue.h"
+#include "states.h"
 #define UNDEF -1
 
 int* dijkstra(graph_t* G, int s){
@@ -13,7 +14,7 @@ int* dijkstra(graph_t* G, int s){
   adjacency_list_node_t* e;
 
   int* d_s = (int*) malloc(sizeof(int)*G->nb_vertices);
-  seen_t seen;
+  states_t *states = initStates(G);
 
   P.nb_members = 0;
   P.elements = NULL;
@@ -27,7 +28,7 @@ int* dijkstra(graph_t* G, int s){
     }
   }
 
-  mark_seen(&seen, s);
+  markState(states, s, VISITED);
 
   /* Iterate over all edges going out of s */
   e = G->adjacency_list_array[s].head;
@@ -37,19 +38,19 @@ int* dijkstra(graph_t* G, int s){
     tmp.u = s;
     tmp.edge = e;
     tmp.length = length;
-    priority_queue_insert(&P, &tmp);
+    priorityQueueInsert(&P, &tmp);
     e = e->next;
   }
 
-  while (!priority_queue_is_empty(&P)) {
-    tmp = *priority_queue_extract_min(&P);
+  while (!priorityQueueIsEmpty(&P)) {
+    tmp = *priorityQueueExtractMin(&P);
     u = tmp.u;
     v = tmp.edge->vertex;
     w = tmp.edge->weight;
 
-    if (!is_seen(&seen, v)) {
+    if (!isState(states, v, VISITED)) {
       d_s[v] = w;
-      mark_seen(&seen, v);
+      markState(states, v, VISITED);
 
       vertex = G->adjacency_list_array[v].head;
       n = G->adjacency_list_array[v].nb_members;
@@ -57,7 +58,7 @@ int* dijkstra(graph_t* G, int s){
         length = d_s[u] + vertex->weight;
         tmp.u = u;
         tmp.edge = vertex;
-        priority_queue_insert(&P, &tmp);
+        priorityQueueInsert(&P, &tmp);
         vertex = vertex->next;
       }
     }
