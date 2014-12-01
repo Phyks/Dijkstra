@@ -14,7 +14,7 @@ int* dijkstra(graph_t* G, int s){
   adjacency_list_node_t* e;
 
   int* d_s = (int*) malloc(sizeof(int)*G->nb_vertices);
-  struct states_t *states = initStates(G);
+  states_t *states = initStates(G);
 
   P.nb_members = 0;
   P.elements = NULL;

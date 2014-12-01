@@ -117,7 +117,7 @@ graph_t *reverseGraph(graph_t *graph) {
  */
 void dfs (graph_t *graph, int *d, int *pi, int *f) {
   int date = 0;
-  struct states_t *states = initStates(graph);  // Set all nodes to not visited
+  states_t *states = initStates(graph);  // Set all nodes to not visited
 
   pi = (int *) malloc(sizeof(int) * graph->nb_vertices);
   if (pi == NULL) {
@@ -152,7 +152,7 @@ void dfs (graph_t *graph, int *d, int *pi, int *f) {
 /**
  * Auxiliary DFS function.
  */
-void dfsVisit(graph_t *graph, int u, struct states_t *states, int *date, int *d, int *pi, int *f) {
+void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *pi, int *f) {
   markNode(states, u, VISITING);
   (*date)++;
 
