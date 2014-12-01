@@ -9,15 +9,15 @@ typedef enum state {
   VISITED
 } state_t;
 
-typedef struct nodes_states {
+struct states_t {
   int nb_members;
   state_t *states;
-} states_t;
+};
 
 
-states_t *initStates(graph_t *graph);
-void destroyStates(states_t *states);
-void markNode(states_t *states, int v, state_t state);
-int isState(states_t* states, int v, state_t state);
+struct states_t *initStates(graph_t *graph);
+void destroyStates(struct states_t *states);
+void markNode(struct states_t *states, int v, state_t state);
+int isState(struct states_t* states, int v, state_t state);
 
 #endif  // _STATES_H_

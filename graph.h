@@ -2,7 +2,7 @@
 #define _GRAPH_H_
 #include <stdbool.h>
 
-#include "states.h"
+struct states_t;
 
 typedef struct adjacency_list_node {  // Represents edges between nodes
   int vertex;  // Other end of the edge
@@ -28,7 +28,7 @@ void printGraph(graph_t *graph);
 
 graph_t *reverseGraph(graph_t *graph);
 void dfs (graph_t *graph, int *d, int *pi, int *f);
-void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *pi, int *f);
+void dfsVisit(graph_t *graph, int u, struct states_t *states, int *date, int *d, int *pi, int *f);
 bool isConnected(graph_t *graph);
 
 #endif  // _GRAPH_H_

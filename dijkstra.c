@@ -14,7 +14,7 @@ int* dijkstra(graph_t* G, int s){
   adjacency_list_node_t* e;
 
   int* d_s = (int*) malloc(sizeof(int)*G->nb_vertices);
-  states_t *states = initStates(G);
+  struct states_t *states = initStates(G);
 
   P.nb_members = 0;
   P.elements = NULL;
@@ -28,7 +28,7 @@ int* dijkstra(graph_t* G, int s){
     }
   }
 
-  markState(states, s, VISITED);
+  markNode(states, s, VISITED);
 
   /* Iterate over all edges going out of s */
   e = G->adjacency_list_array[s].head;
@@ -50,7 +50,7 @@ int* dijkstra(graph_t* G, int s){
 
     if (!isState(states, v, VISITED)) {
       d_s[v] = w;
-      markState(states, v, VISITED);
+      markNode(states, v, VISITED);
 
       vertex = G->adjacency_list_array[v].head;
       n = G->adjacency_list_array[v].nb_members;

@@ -48,7 +48,7 @@ void priorityQueueInsert(priority_queue_t* P, priority_queue_element_t* e) {
   P->elements[P->nb_members-1] = *e;
 }
 
-int priorityQueueIs_Empty(priority_queue_t* P) {
+int priorityQueueIsEmpty(priority_queue_t* P) {
   return P->nb_members == 0;
 }
 

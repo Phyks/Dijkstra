@@ -7,8 +7,8 @@
 /**
  * Init states array.
  */
-states_t *initStates(graph_t *graph) {
-  states_t *states = (states_t *) malloc(sizeof(states_t));
+struct states_t *initStates(graph_t *graph) {
+  struct states_t *states = (struct states_t *) malloc(sizeof(struct states_t));
 
   if (states == NULL) {
     fprintf(stderr, "Unable to allocate memory to store states.\n");
@@ -34,7 +34,7 @@ states_t *initStates(graph_t *graph) {
 /**
  * Free the states array.
  */
-void destroyStates(states_t *states) {
+void destroyStates(struct states_t *states) {
   free(states);
 }
 
@@ -42,7 +42,7 @@ void destroyStates(states_t *states) {
 /**
  * Mark a node with a given state.
  */
-void markNode(states_t *states, int v, state_t state) {
+void markNode(struct states_t *states, int v, state_t state) {
   states->states[v] = state;
 }
 
@@ -50,7 +50,7 @@ void markNode(states_t *states, int v, state_t state) {
 /**
  * Check if node is already of given state.
  */
-int isState(states_t* states, int v, state_t state) {
+int isState(struct states_t* states, int v, state_t state) {
   for (int i = 0; i < states->nb_members; i++) {
     if (states->states[i] == state) {
       return true;

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "graph.h"
+#include "states.h"
 
 
 /**
@@ -116,7 +117,7 @@ graph_t *reverseGraph(graph_t *graph) {
  */
 void dfs (graph_t *graph, int *d, int *pi, int *f) {
   int date = 0;
-  states_t *states = initStates(graph);  // Set all nodes to not visited
+  struct states_t *states = initStates(graph);  // Set all nodes to not visited
 
   pi = (int *) malloc(sizeof(int) * graph->nb_vertices);
   if (pi == NULL) {
@@ -144,14 +145,14 @@ void dfs (graph_t *graph, int *d, int *pi, int *f) {
     }
   }
 
-  freeStates(states);
+  destroyStates(states);
 }
 
 
 /**
  * Auxiliary DFS function.
  */
-void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *pi, int *f) {
+void dfsVisit(graph_t *graph, int u, struct states_t *states, int *date, int *d, int *pi, int *f) {
   markNode(states, u, VISITING);
   (*date)++;
 
@@ -174,7 +175,7 @@ void dfsVisit(graph_t *graph, int u, states_t *states, int *date, int *d, int *p
  * Check whether the graph is connected or not.
  */
 bool isConnected(graph_t *graph) {
-  int *d, *pi, *f;
+  int *d = NULL, *pi = NULL, *f = NULL;
   dfs(graph, d, pi, f);
 
   graph_t *reversed_graph = reverseGraph(graph);
