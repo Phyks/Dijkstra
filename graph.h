@@ -19,10 +19,19 @@ typedef struct graph {
   adjacency_list_t *adjacency_list_array;  // An array of adjacency lists
 } graph_t;
 
+typedef struct seen {
+  int nb_members;
+  int* vertices;
+} seen_t;
+
+
 graph_t *createGraph(int n);
 void freeGraph(graph_t *graph);
 void addEdge(graph_t *graph, int src, int dest, int weight);
 void printGraph(graph_t *graph);
+
+void mark_seen(seen_t *seen, int v);
+int is_seen(seen_t* seen, int v);
 
 graph_t *reverseGraph(graph_t *graph);
 int dfs (graph_t *graph, int s, int current_time);

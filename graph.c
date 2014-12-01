@@ -112,6 +112,30 @@ graph_t *reverseGraph(graph_t *graph) {
 
 
 /**
+ * Mark a node as seen.
+ */
+void mark_seen(seen_t *seen, int v) {
+  seen->nb_members++;
+  seen->vertices = (int*)realloc(seen, sizeof((int)seen->nb_members));
+  seen->vertices[seen->nb_members] = v;
+}
+
+
+/**
+ * Check if node is already seen.
+ */
+int is_seen(seen_t* seen, int v) {
+  for (int i = 0; i < seen->nb_members; i++) {
+    if (seen->vertices[i] == v) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+
+/**
  * Do a DFS starting from specified node.
  *
  * @return End time.
