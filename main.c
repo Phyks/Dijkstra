@@ -35,6 +35,8 @@ char *strstrip(char *s) {
 
 /**
  * Create a graph structure from an input file.
+ *
+ * @todo Read better the file, to be able to parse large files.
  */
 graph_t *parse_input_file (char *file) {
     FILE *fp;

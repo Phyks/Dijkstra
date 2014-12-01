@@ -1,5 +1,7 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "graph.h"
 
 
@@ -36,13 +38,15 @@ graph_t *createGraph(int n) {
  * Destroy the graph
  */
 void freeGraph(graph_t *graph) {
-    if (graph) {
-        if (graph->adjacency_list_array) {
+    if (graph != NULL) {
+        if (graph->adjacency_list_array != NULL) {
             // Free the adjacency list array
             for (int v = 0; v < graph->nb_vertices; v++) {
                 adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[v].head;
-                while (adjacency_list_item) {
-                    free(adjacency_list_item->next);
+                while (adjacency_list_item != NULL) {
+                    adjacency_list_node_t *tmp = adjacency_list_item;
+                    adjacency_list_item = adjacency_list_item->next;
+                    free(tmp);
                 }
             }
         }
@@ -80,10 +84,71 @@ void printGraph(graph_t *graph) {
     for (int i = 0; i < graph->nb_vertices; i++) {
         adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
         printf("\n%d: ", i);
-        while (adjacency_list_item) {
+        while (adjacency_list_item != NULL) {
             printf("%d (%d) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
             adjacency_list_item = adjacency_list_item->next;
         }
         printf("NULL\n");
     }
+}
+
+
+/**
+ * Reverse a graph
+ */
+graph_t *reverseGraph(graph_t *graph) {
+    graph_t *reversed_graph = createGraph(graph->nb_vertices);
+
+    for (int i = 0; i < graph->nb_vertices; i++) {
+        adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
+        while (adjacency_list_item != NULL) {
+            addEdge(reversed_graph, adjacency_list_item->vertex, i, adjacency_list_item->weight);
+            adjacency_list_item = adjacency_list_item->next;
+        }
+    }
+
+    return reversed_graph;
+}
+
+
+/**
+ * Do a DFS starting from specified node.
+ *
+ * @return End time.
+ * @todo
+ */
+int dfs (graph_t *graph, int s, int current_time) {
+    // Mark node s
+    graph->adjacency_list_array[u].visited = true;
+
+    // For all the neighbours
+    adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
+    while (adjacency_list_item != NULL) {
+        // If not marked
+        if (graph->adjacency_list_array[adjacency_list_item->vertex].visited == true) {
+            current_time = dfs(graph, adjacency_list_item->vertex, current_time);
+        }
+        adjacency_list_item = adjacency_list_item->next;
+    }
+
+    graph->adjacency_list_array[u].end_time = current_time;
+
+    return current_time + 1;
+}
+
+
+/**
+ * Check whether the graph is connected or not.
+ * @todo
+ */
+bool isConnected(graph_t *graph) {
+    graph_t *reversed_graph = reverseGraph(graph);
+
+    resetVisited(reversed_graph);
+    dsf(reversed_graph, 0, 1);
+    while (findNotVisited(graph) != -1) {
+        dsf()
+    }
+
+    freeGraph(reversed_graph);
 }
