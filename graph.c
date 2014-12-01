@@ -9,28 +9,28 @@
  * Create an empty graph with n vertices
  */
 graph_t *createGraph(int n) {
-    graph_t *graph = (graph_t *) malloc(sizeof(graph_t));
+  graph_t *graph = (graph_t *) malloc(sizeof(graph_t));
 
-    if(graph == NULL) {
-        fprintf(stderr, "Unable to allocate memory for graph.\n");
-        exit(EXIT_FAILURE);
-    }
+  if(graph == NULL) {
+    fprintf(stderr, "Unable to allocate memory for graph.\n");
+    exit(EXIT_FAILURE);
+  }
 
-    graph->nb_vertices = n;
+  graph->nb_vertices = n;
 
-    /* Create an array of adjacency lists*/
-    graph->adjacency_list_array = (adjacency_list_t *) malloc(n * sizeof(adjacency_list_t));
-    if(!graph->adjacency_list_array) {
-        fprintf(stderr, "Unable to allocate memory for adjacency list array.\n");
-        exit(EXIT_FAILURE);
-    }
+  /* Create an array of adjacency lists*/
+  graph->adjacency_list_array = (adjacency_list_t *) malloc(n * sizeof(adjacency_list_t));
+  if(!graph->adjacency_list_array) {
+    fprintf(stderr, "Unable to allocate memory for adjacency list array.\n");
+    exit(EXIT_FAILURE);
+  }
 
-    for(int i = 0; i < n; i++) {
-        graph->adjacency_list_array[i].head = NULL;
-        graph->adjacency_list_array[i].nb_members = 0;
-    }
+  for(int i = 0; i < n; i++) {
+    graph->adjacency_list_array[i].head = NULL;
+    graph->adjacency_list_array[i].nb_members = 0;
+  }
 
-    return graph;
+  return graph;
 }
 
 
@@ -38,21 +38,21 @@ graph_t *createGraph(int n) {
  * Destroy the graph
  */
 void freeGraph(graph_t *graph) {
-    if (graph != NULL) {
-        if (graph->adjacency_list_array != NULL) {
-            // Free the adjacency list array
-            for (int v = 0; v < graph->nb_vertices; v++) {
-                adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[v].head;
-                while (adjacency_list_item != NULL) {
-                    adjacency_list_node_t *tmp = adjacency_list_item;
-                    adjacency_list_item = adjacency_list_item->next;
-                    free(tmp);
-                }
-            }
+  if (graph != NULL) {
+    if (graph->adjacency_list_array != NULL) {
+      // Free the adjacency list array
+      for (int v = 0; v < graph->nb_vertices; v++) {
+        adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[v].head;
+        while (adjacency_list_item != NULL) {
+          adjacency_list_node_t *tmp = adjacency_list_item;
+          adjacency_list_item = adjacency_list_item->next;
+          free(tmp);
         }
-        // Free the graph
-        free(graph);
+      }
     }
+    // Free the graph
+    free(graph);
+  }
 }
 
 
@@ -60,20 +60,20 @@ void freeGraph(graph_t *graph) {
  * Add an edge to a graph.
  */
 void addEdge(graph_t *graph, int src, int dest, int weight) {
-    // Create a new adjacency list node
-    adjacency_list_node_t *newNode = (adjacency_list_node_t *) malloc(sizeof(adjacency_list_node_t));
-    if (newNode == NULL) {
-        fprintf(stderr, "Unable to allocate memory for new node in adjacency list.\n");
-        exit(EXIT_FAILURE);
-    }
-    newNode->vertex = dest;
-    newNode->weight = weight;
+  // Create a new adjacency list node
+  adjacency_list_node_t *newNode = (adjacency_list_node_t *) malloc(sizeof(adjacency_list_node_t));
+  if (newNode == NULL) {
+    fprintf(stderr, "Unable to allocate memory for new node in adjacency list.\n");
+    exit(EXIT_FAILURE);
+  }
+  newNode->vertex = dest;
+  newNode->weight = weight;
 
-    // Add it in place of the head of the list
-    newNode->next = graph->adjacency_list_array[src].head;
+  // Add it in place of the head of the list
+  newNode->next = graph->adjacency_list_array[src].head;
 
-    graph->adjacency_list_array[src].head = newNode;
-    graph->adjacency_list_array[src].nb_members++;
+  graph->adjacency_list_array[src].head = newNode;
+  graph->adjacency_list_array[src].nb_members++;
 }
 
 
@@ -81,15 +81,15 @@ void addEdge(graph_t *graph, int src, int dest, int weight) {
  * Pretty print
  */
 void printGraph(graph_t *graph) {
-    for (int i = 0; i < graph->nb_vertices; i++) {
-        adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
-        printf("\n%d: ", i);
-        while (adjacency_list_item != NULL) {
-            printf("%d (%d) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
-            adjacency_list_item = adjacency_list_item->next;
-        }
-        printf("NULL\n");
+  for (int i = 0; i < graph->nb_vertices; i++) {
+    adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
+    printf("\n%d: ", i);
+    while (adjacency_list_item != NULL) {
+      printf("%d (%d) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
+      adjacency_list_item = adjacency_list_item->next;
     }
+    printf("NULL\n");
+  }
 }
 
 
@@ -97,17 +97,17 @@ void printGraph(graph_t *graph) {
  * Reverse a graph
  */
 graph_t *reverseGraph(graph_t *graph) {
-    graph_t *reversed_graph = createGraph(graph->nb_vertices);
+  graph_t *reversed_graph = createGraph(graph->nb_vertices);
 
-    for (int i = 0; i < graph->nb_vertices; i++) {
-        adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
-        while (adjacency_list_item != NULL) {
-            addEdge(reversed_graph, adjacency_list_item->vertex, i, adjacency_list_item->weight);
-            adjacency_list_item = adjacency_list_item->next;
-        }
+  for (int i = 0; i < graph->nb_vertices; i++) {
+    adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
+    while (adjacency_list_item != NULL) {
+      addEdge(reversed_graph, adjacency_list_item->vertex, i, adjacency_list_item->weight);
+      adjacency_list_item = adjacency_list_item->next;
     }
+  }
 
-    return reversed_graph;
+  return reversed_graph;
 }
 
 
@@ -118,24 +118,24 @@ graph_t *reverseGraph(graph_t *graph) {
  * @todo
  */
 int dfs (graph_t *graph, int s, int current_time) {
-    /*
-    // Mark node s
-    graph->adjacency_list_array[u].visited = true;
+  /*
+  // Mark node s
+  graph->adjacency_list_array[u].visited = true;
 
-    // For all the neighbours
-    adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
-    while (adjacency_list_item != NULL) {
-        // If not marked
-        if (graph->adjacency_list_array[adjacency_list_item->vertex].visited == true) {
-            current_time = dfs(graph, adjacency_list_item->vertex, current_time);
-        }
-        adjacency_list_item = adjacency_list_item->next;
-    }
+  // For all the neighbours
+  adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
+  while (adjacency_list_item != NULL) {
+  // If not marked
+  if (graph->adjacency_list_array[adjacency_list_item->vertex].visited == true) {
+  current_time = dfs(graph, adjacency_list_item->vertex, current_time);
+  }
+  adjacency_list_item = adjacency_list_item->next;
+  }
 
-    graph->adjacency_list_array[u].end_time = current_time;
-    */
+  graph->adjacency_list_array[u].end_time = current_time;
+  */
 
-    return current_time + 1;
+  return current_time + 1;
 }
 
 
@@ -144,16 +144,16 @@ int dfs (graph_t *graph, int s, int current_time) {
  * @todo
  */
 bool isConnected(graph_t *graph) {
-    /*
-    graph_t *reversed_graph = reverseGraph(graph);
+  /*
+     graph_t *reversed_graph = reverseGraph(graph);
 
-    resetVisited(reversed_graph);
-    dsf(reversed_graph, 0, 1);
-    while (findNotVisited(graph) != -1) {
-        dsf()
-    }
+     resetVisited(reversed_graph);
+     dsf(reversed_graph, 0, 1);
+     while (findNotVisited(graph) != -1) {
+     dsf()
+     }
 
-    freeGraph(reversed_graph);
-    */
-    return true;
+     freeGraph(reversed_graph);
+     */
+  return true;
 }
