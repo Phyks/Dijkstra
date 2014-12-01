@@ -112,45 +112,10 @@ graph_t *reverseGraph(graph_t *graph) {
 
 
 /**
- * Reset marks placed by DFS on a graph
- */
-void resetVisited(graph_t graph) {
-    for (int i = 0; i < graph->nb_vertices; i++) {
-        graph->adjacency_list_array[i].visited = false;
-    }
-}
-
-
-/**
- * Reset timers placed by DFS on a graph
- */
-void resetTimers(graph_t graph) {
-    for (int i = 0; i < graph->nb_vertices; i++) {
-        graph->adjacency_list_array[i].end_time = 0;
-    }
-}
-
-
-/**
- * Find a not visited node.
- *
- * @return The node index if found any, -1 otherwise.
- */
-int findNotVisited(graph_t graph) {
-    for (int i = 0; i < graph->nb_vertices; i++) {
-        if (graph->adjacency_list_array[i].visited == false) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-
-/**
  * Do a DFS starting from specified node.
  *
  * @return End time.
+ * @todo
  */
 int dfs (graph_t *graph, int s, int current_time) {
     // Mark node s
@@ -174,6 +139,7 @@ int dfs (graph_t *graph, int s, int current_time) {
 
 /**
  * Check whether the graph is connected or not.
+ * @todo
  */
 bool isConnected(graph_t *graph) {
     graph_t *reversed_graph = reverseGraph(graph);

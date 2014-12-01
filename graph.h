@@ -11,8 +11,6 @@ typedef struct adjacency_list_node {  // Represents edges between nodes
 
 typedef struct adjacency_list {  // Represents a node
     int nb_members;  // Number of members in the adjacency list
-    bool visited;  // To store whether it has been visited or not during dfs
-    int end_time;  // To store time t' in DFS
     adjacency_list_node_t *head;  // Head of the adjacency linked list
 } adjacency_list_t;
 
@@ -27,9 +25,6 @@ void addEdge(graph_t *graph, int src, int dest, int weight);
 void printGraph(graph_t *graph);
 
 graph_t *reverseGraph(graph_t *graph);
-void resetVisited(graph_t graph);
-void resetTimers(graph_t graph);
-int findNotVisited(graph_t graph);
 int dfs (graph_t *graph, int s, int current_time);
 bool isConnected(graph_t *graph);
 
