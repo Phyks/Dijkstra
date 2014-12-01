@@ -17,7 +17,6 @@ typedef struct graph {
     adjacency_list_t *adjacency_list_array;  // An array of adjacency lists
 } graph_t;
 
-
 graph_t *createGraph(int n);
 void freeGraph(graph_t *graph);
 void addEdge(graph_t *graph, int src, int dest, int weight);

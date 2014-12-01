@@ -42,9 +42,7 @@ void freeGraph(graph_t *graph) {
             for (int v = 0; v < graph->nb_vertices; v++) {
                 adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[v].head;
                 while (adjacency_list_item) {
-                    adjacency_list_node_t *tmp = adjacency_list_item;
-                    adjacency_list_item = adjacency_list_item->next;
-                    free(tmp);
+                    free(adjacency_list_item->next);
                 }
             }
         }
