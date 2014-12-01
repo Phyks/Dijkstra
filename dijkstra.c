@@ -12,7 +12,7 @@ typedef struct Seen {
 void add_to(Seen_t* seen, int v) {
   seen->nb_members++;
   seen->vertices = (int*)realloc(seen,
-				 sizeof((int)seen->nb_members));
+                                 sizeof((int)seen->nb_members));
   seen->vertices[seen->nb_members] = v;
 }
 
@@ -75,12 +75,12 @@ int* dijkstra(graph_t* G, int s){
       vertex = G->adjacency_list_array[v].head;
       n = G->adjacency_list_array[v].nb_members;
       for (int i = 0; i < n; i++) {
-	length = d_s[u] + vertex->weight;
-	tmp.u = u;
-	tmp.edge = vertex;
-	priority_queue_insert(&P, &tmp);
-	vertex = vertex->next;
-      }	
+        length = d_s[u] + vertex->weight;
+        tmp.u = u;
+        tmp.edge = vertex;
+        priority_queue_insert(&P, &tmp);
+        vertex = vertex->next;
+      } 
     }
   }
   free(vertex);

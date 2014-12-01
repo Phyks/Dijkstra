@@ -19,7 +19,7 @@ priority_queue_element_t* priority_queue_extract_min(priority_queue_t* P) {
       i_min = i;
     }
   }
-  if (i_min == -1){ 		/* no element in P */
+  if (i_min == -1){             /* no element in P */
     fprintf(stderr, "P is empty.\n");
     exit(EXIT_FAILURE);
   }
