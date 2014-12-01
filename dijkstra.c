@@ -54,21 +54,12 @@ int* dijkstra(graph_t* G, int s){
       vertex = G->adjacency_list_array[v].head;
       n = G->adjacency_list_array[v].nb_members;
       for (int i = 0; i < n; i++) {
-<<<<<<< HEAD
-	length = d_s[u] + vertex->weight;
-	tmp.u = u;
-	tmp.edge = vertex;
-	priority_queue_insert(&P, &tmp);
-	vertex = vertex->next;
-      }
-=======
         length = d_s[u] + vertex->weight;
         tmp.u = u;
         tmp.edge = vertex;
         priority_queue_insert(&P, &tmp);
         vertex = vertex->next;
       }
->>>>>>> 97bf7f474be2f405b013f36016ba4c44576d23af
     }
   }
   free(vertex);
