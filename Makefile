@@ -11,3 +11,10 @@ $(EXECUTABLE): $(SOURCES)
 
 clean:
 	rm -rf $(EXECUTABLE)
+
+test: $(EXECUTABLE)
+	@for i in tests/* ; do \
+		echo "$$i :" ; \
+		./$(EXECUTABLE) $$i ; \
+		echo "" ; \
+	done
