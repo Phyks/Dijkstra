@@ -2,7 +2,7 @@ CC=gcc -g -Wall -Wextra
 CFLAGS=-std=c99 -Wall
 SHELL=/bin/zsh
 
-SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c
+SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c fibonacci_heap.c
 EXECUTABLE=dijkstra
 
 all: $(SOURCES) $(EXECUTABLE)
