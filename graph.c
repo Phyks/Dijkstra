@@ -4,7 +4,7 @@
 
 #include "graph.h"
 #include "states.h"
-
+#include "utils.h"
 
 /**
  * Create an empty graph with n vertices
@@ -20,7 +20,7 @@ graph_t *createGraph(int n) {
   graph->nb_vertices = n;
 
   /* Create an array of adjacency lists*/
-  graph->adjacency_list_array = (adjacency_list_t *) malloc(n * sizeof(adjacency_list_t));
+  graph->adjacency_list_array = (adjacency_list_t *) safe_malloc(n * sizeof(adjacency_list_t));
   if(!graph->adjacency_list_array) {
     fprintf(stderr, "Unable to allocate memory for adjacency list array.\n");
     exit(EXIT_FAILURE);
@@ -61,7 +61,7 @@ void freeGraph(graph_t *graph) {
  * Get the nodes in a graph.
  */
 int *getNodes(graph_t const *graph) {
-  int *nodes = malloc(sizeof(int) * graph->nb_vertices);
+  int *nodes = safe_malloc(sizeof(int) * graph->nb_vertices);
 
   for (int i = 0; i < graph->nb_vertices; i++) {
     nodes[i] = i;
@@ -76,7 +76,7 @@ int *getNodes(graph_t const *graph) {
  */
 void addEdge(graph_t *graph, int src, int dest, int weight) {
   // Create a new adjacency list node
-  adjacency_list_node_t *newNode = (adjacency_list_node_t *) malloc(sizeof(adjacency_list_node_t));
+  adjacency_list_node_t *newNode = (adjacency_list_node_t *) safe_malloc(sizeof(adjacency_list_node_t));
   if (newNode == NULL) {
     fprintf(stderr, "Unable to allocate memory for new node in adjacency list.\n");
     exit(EXIT_FAILURE);
@@ -152,17 +152,17 @@ void dfs (graph_t const *graph, int *d, int *pi, int *f, int const *nodes) {
   int date = 0;
   states_t *states = initStates(graph);  // Set all nodes to not visited
 
-  pi = (int *) malloc(sizeof(int) * graph->nb_vertices);
+  pi = (int *) safe_malloc(sizeof(int) * graph->nb_vertices);
   if (pi == NULL) {
     fprintf(stderr, "Unable to allocate memory to store parent informations.\n");
     exit(EXIT_FAILURE);
   }
-  f = (int *) malloc(sizeof(int) * graph->nb_vertices);
+  f = (int *) safe_malloc(sizeof(int) * graph->nb_vertices);
   if (f == NULL) {
     fprintf(stderr, "Unable to allocate memory to store discovery dates.\n");
     exit(EXIT_FAILURE);
   }
-  d = (int *) malloc(sizeof(int) * graph->nb_vertices);
+  d = (int *) safe_malloc(sizeof(int) * graph->nb_vertices);
   if (f == NULL) {
     fprintf(stderr, "Unable to allocate memory to store ending dates.\n");
     exit(EXIT_FAILURE);

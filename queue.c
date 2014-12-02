@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "queue.h"
+#include "utils.h"
 
 void test_alloc(void* a) {
   if (a == NULL) {
@@ -30,20 +31,19 @@ priority_queue_element_t* priorityQueueExtractMin(priority_queue_t* P) {
 }
 void priorityQueueRemove(priority_queue_t* P, int x) {
   P->nb_members --;
+  /* shift to the left */
   for (int i = x; i < P->nb_members; i++) {
     P->elements[i] = P->elements[i+1];
   }
+  /* shrink the size */
   P->elements = (priority_queue_element_t*)
-    realloc(P->elements, sizeof(priority_queue_element_t)*P->nb_members);
-
-  test_alloc(P->elements);
+    safe_realloc(P->elements, sizeof(priority_queue_element_t)*P->nb_members);
 }
 
 void priorityQueueInsert(priority_queue_t* P, priority_queue_element_t* e) {
   P->nb_members++;
   P->elements = (priority_queue_element_t*)
-    realloc(P->elements, sizeof(priority_queue_element_t)*P->nb_members);
-  test_alloc(P->elements);
+    safe_realloc(P->elements, sizeof(priority_queue_element_t)*P->nb_members);
 
   P->elements[P->nb_members-1] = *e;
 }

@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 #include "graph.h"
-
+#include "dijkstra.h"
 
 /**
  * Trim/Strip function
@@ -31,6 +31,7 @@ char *strstrip(char *s) {
 
   return s;
 }
+
 
 
 /**
@@ -94,6 +95,7 @@ int main(int argc, char **argv) {
 
   printGraph(graph);
 
+  dijkstra(graph, 0);
   freeGraph(graph);
 
   exit(EXIT_SUCCESS);

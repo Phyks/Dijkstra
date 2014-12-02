@@ -3,12 +3,13 @@
 #include <stdlib.h>
 
 #include "states.h"
+#include "utils.h"
 
 /**
  * Init states array.
  */
 states_t *initStates(graph_t const *graph) {
-  states_t *states = (states_t *) malloc(sizeof(states_t));
+  states_t *states = (states_t *) safe_malloc(sizeof(states_t));
 
   if (states == NULL) {
     fprintf(stderr, "Unable to allocate memory to store states.\n");
@@ -16,7 +17,7 @@ states_t *initStates(graph_t const *graph) {
   }
 
   states->nb_members = graph->nb_vertices;
-  states->states = malloc(sizeof(state_t) * states->nb_members);
+  states->states = safe_malloc(sizeof(state_t) * states->nb_members);
 
   if (states->states == NULL) {
     fprintf(stderr, "Unable to allocate memory to store states.\n");
