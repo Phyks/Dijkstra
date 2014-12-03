@@ -1,5 +1,5 @@
-CC?=gcc -g -Wall -Wextra
-CFLAGS?=-std=c99 -Wall
+CC=gcc -g -Wall -Wextra
+CFLAGS=-std=c99 -Wall
 
 SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c
 EXECUTABLE=a.out
