@@ -31,9 +31,8 @@ void dijkstra(graph_t* G, int source, int* prev, int* dist){
       dist[i] = 0;
     else {
       dist[i] = UNDEF;
-
-      prev[i] = UNDEF;
     }
+    prev[i] = UNDEF;
     /* add it to the priority queue */
     tmp.u = i;
     tmp.dist = dist[i];
