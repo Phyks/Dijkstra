@@ -36,6 +36,7 @@ states_t *initStates(graph_t const *graph) {
  * Free the states array.
  */
 void freeStates(states_t *states) {
+  free(states->states);  
   free(states);
 }
 

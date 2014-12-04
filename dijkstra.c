@@ -66,5 +66,6 @@ void dijkstra(graph_t* G, int source, int* prev, int* dist){
     }
   }
   freeStates(states);
+  free(P.elements);
 }
 

@@ -16,11 +16,8 @@ graph_t *createGraph(int n) {
   graph->nb_vertices = n;
 
   /* Create an array of adjacency lists*/
-  graph->adjacency_list_array = (adjacency_list_t *) safe_malloc(n * sizeof(adjacency_list_t));
-  if(!graph->adjacency_list_array) {
-    fprintf(stderr, "Unable to allocate memory for adjacency list array.\n");
-    exit(EXIT_FAILURE);
-  }
+  graph->adjacency_list_array =
+    (adjacency_list_t *) safe_malloc(n * sizeof(adjacency_list_t));
 
   for(int i = 0; i < n; i++) {
     graph->adjacency_list_array[i].head = NULL;
@@ -39,10 +36,12 @@ void freeGraph(graph_t *graph) {
     if (graph->adjacency_list_array != NULL) {
       // Free the adjacency list array
       for (int v = 0; v < graph->nb_vertices; v++) {
-        adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[v].head;
-        while (adjacency_list_item != NULL) {
-          adjacency_list_node_t *tmp = adjacency_list_item;
-          adjacency_list_item = adjacency_list_item->next;
+        adjacency_list_node_t *item =
+          graph->adjacency_list_array[v].head;
+        
+        while (item != NULL) {
+          adjacency_list_node_t *tmp = item;
+          item = item->next;
           free(tmp);
         }
       }
