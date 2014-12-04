@@ -5,7 +5,7 @@
 
 #include "graph.h"
 #include "dijkstra.h"
-
+#include "utils.h"
 /**
  * Trim/Strip function
  */
@@ -31,7 +31,6 @@ char *strstrip(char *s) {
 
   return s;
 }
-
 
 
 /**
@@ -84,6 +83,7 @@ graph_t *parse_input_file (char *file) {
 }
 
 int main(int argc, char **argv) {
+  int** ret;
   if (argc < 2) {
     fprintf(stderr, "No input graph.\n\nUsage:\n\t");
     fprintf(stderr, "%s", argv[0]);
@@ -92,11 +92,25 @@ int main(int argc, char **argv) {
   }
 
   graph_t *graph = parse_input_file(argv[1]);
-
+  int* dist = (int*) safe_malloc(sizeof(int)*graph->nb_vertices);
+  int* prev = (int*) safe_malloc(sizeof(int)*graph->nb_vertices);
+  int start = 0;
   printGraph(graph);
 
-  dijkstra(graph, 0);
+  dijkstra(graph, start, prev, dist);
+
+  fprintf(stdout, "Start : %d\n", start);
+  fprintf(stdout, "\tVertex\tDistance\n");
+  for (int i=0; i<graph->nb_vertices; i++) {
+    fprintf(stdout, "\t%d\t%d\n", i, dist[i]);
+  }
+  
   freeGraph(graph);
 
   exit(EXIT_SUCCESS);
 }
+
+
+
+
+
