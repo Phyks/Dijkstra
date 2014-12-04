@@ -2,12 +2,12 @@ CC=gcc -g -Wall -Wextra
 CFLAGS=-std=c99 -Wall
 
 SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c
-EXECUTABLE=Debug
+EXECUTABLE=dijkstra
 
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(SOURCES)
-	$(CC) $(CFLAGS) $(SOURCES)
+	$(CC) $(CFLAGS) $(SOURCES) -o $(EXECUTABLE)
 
 clean:
 	rm -rf $(EXECUTABLE)
