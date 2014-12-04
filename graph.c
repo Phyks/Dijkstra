@@ -174,7 +174,7 @@ void dfs (graph_t const *graph, int *d, int *pi, int *f, int const *nodes) {
     }
   }
 
-  destroyStates(states);
+  freeStates(states);
 }
 
 

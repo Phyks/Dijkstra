@@ -16,7 +16,7 @@ typedef struct states {
 
 
 states_t *initStates(graph_t const *graph);
-void destroyStates(states_t *states);
+void freeStates(states_t *states);
 void markNode(states_t *states, int v, state_t state);
 int isState(states_t const *states, int v, state_t state);
 

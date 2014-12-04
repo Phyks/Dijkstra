@@ -35,7 +35,7 @@ states_t *initStates(graph_t const *graph) {
 /**
  * Free the states array.
  */
-void destroyStates(states_t *states) {
+void freeStates(states_t *states) {
   free(states);
 }
 
