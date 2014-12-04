@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 
 #include "graph.h"
 #include "dijkstra.h"
@@ -92,17 +93,22 @@ int main(int argc, char **argv) {
   }
 
   graph_t *graph = parse_input_file(argv[1]);
+  int start = 0;
   int* dist = (int*) safe_malloc(sizeof(int)*graph->nb_vertices);
   int* prev = (int*) safe_malloc(sizeof(int)*graph->nb_vertices);
-  int start = 0;
-  printGraph(graph);
-
   dijkstra(graph, start, prev, dist);
 
-  fprintf(stdout, "Start : %d\n", start);
-  fprintf(stdout, "\tVertex\tDistance\n");
   for (int i=0; i<graph->nb_vertices; i++) {
-    fprintf(stdout, "\t%d\t%d\n", i, dist[i]);
+    fprintf(stdout, "%d\t", i);
+    if (dist[i] == INT_MAX)
+      fprintf(stdout, "-\t-\n");
+    else{
+      fprintf(stdout, "%d\t", dist[i]);
+      if(prev[i] == INT_MAX)           /* unreachable */
+        fprintf(stdout, "-\n");
+      else
+        fprintf(stdout, "%d\n", prev[i]);
+    }
   }
   
   freeGraph(graph);
