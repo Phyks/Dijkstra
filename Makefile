@@ -11,6 +11,7 @@ $(EXECUTABLE): $(SOURCES)
 
 clean:
 	rm -rf $(EXECUTABLE)
+	rm $(SOURCES:%.c=%.o)
 
 test: $(EXECUTABLE)
 	@for i in tests/* ; do \
