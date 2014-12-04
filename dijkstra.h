@@ -1,3 +1,3 @@
 #include "graph.h"
 
-int* dijkstra(graph_t* G, int s);
+void dijkstra(graph_t* G, int s, int* prev, int* dist);

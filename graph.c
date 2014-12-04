@@ -4,18 +4,14 @@
 
 #include "graph.h"
 #include "states.h"
+
 #include "utils.h"
 
 /**
  * Create an empty graph with n vertices
  */
 graph_t *createGraph(int n) {
-  graph_t *graph = (graph_t *) malloc(sizeof(graph_t));
-
-  if(graph == NULL) {
-    fprintf(stderr, "Unable to allocate memory for graph.\n");
-    exit(EXIT_FAILURE);
-  }
+  graph_t *graph = (graph_t *) safe_malloc(sizeof(graph_t));
 
   graph->nb_vertices = n;
 
