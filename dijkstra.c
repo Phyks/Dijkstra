@@ -8,7 +8,7 @@
 #include "utils.h"
 
 #define UNDEF INT_MAX
-
+#define DEBUG 0
 
 void dijkstra(graph_t* G, int source, int* prev, int* dist){
   priority_queue_t P;
@@ -23,6 +23,9 @@ void dijkstra(graph_t* G, int source, int* prev, int* dist){
   P.nb_members = 0;
   P.elements   = NULL;
   /* for all nodes of the graph s */
+  if(DEBUG) {
+    printf("Dijkstra: initialisation des distances.\n");
+  }
   for (int i = 0; i < G->nb_vertices; i++) {
     if (i == source) 		/* distance from start point = 0 */
       dist[i] = 0;
@@ -36,20 +39,40 @@ void dijkstra(graph_t* G, int source, int* prev, int* dist){
     tmp.dist = dist[i];
     priorityQueueInsert(&P, tmp); /* insert P <- i, d[i] */
   }
+  if(DEBUG) {
+    for (int i = 0; i < G->nb_vertices; i++) {
+      printf("%d: %d-%d\n", i, dist[i], prev[i]);
+    }
+  }
+  if(DEBUG) {
+    printf("terminé.\n");
+  }
 
   while (!priorityQueueIsEmpty(&P)) {
+    if(DEBUG) {
+      printf("\tNode\tDist\n");
+      for (int i = 0; i < P.nb_members; i++) {
+        printf("\t%d\t%d\n",P.elements[i].u,P.elements[i].dist);
+      }
+    }
     tmp = priorityQueueExtractMin(&P);
     u = tmp.u;
     markNode(states, u, VISITED);
 
+    if(DEBUG) {
+      printf("\t -> Exploration depuis %d.\n", u);
+    }
     /* explore all edges going out of u */
     n = G->adjacency_list_array[u].nb_members;
     edge = G->adjacency_list_array[u].head;
-    if (n > 0) {                /* if there is an out-
-                                   going edge*/
-      v = edge->vertex;
-    }
+
     for (int i = 0; i < n; i ++) {
+      v = edge->vertex;
+      
+      if(DEBUG) {
+        printf("\t\tSur l'arête %d->%d\n", u, v);
+      }
+      
       if (states->states[v] != VISITED) {
 	d = dist[u] + edge->weight;
 	/* if this path gives a shorter way */
