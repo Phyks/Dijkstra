@@ -2,7 +2,7 @@ CC=gcc -g -Wall -Wextra
 CFLAGS=-std=c99 -Wall
 
 SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c
-EXECUTABLE=a.out
+EXECUTABLE=Debug
 
 all: $(SOURCES) $(EXECUTABLE)
 
@@ -15,6 +15,9 @@ clean:
 test: $(EXECUTABLE)
 	@for i in tests/* ; do \
 		echo "$$i :" ; \
+		echo "Got :" ; \
 		./$(EXECUTABLE) $$i ; \
+		echo "Expected :" ; \
+		cat tests_outputs/$${i#tests/}; \
 		echo "" ; \
 	done
