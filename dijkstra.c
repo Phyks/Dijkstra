@@ -65,5 +65,6 @@ void dijkstra(graph_t* G, int source, int* prev, int* dist){
       edge = edge->next;
     }
   }
+  freeStates(states);
 }
 

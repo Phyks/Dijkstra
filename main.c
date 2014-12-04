@@ -106,7 +106,8 @@ int main(int argc, char **argv) {
   }
   
   freeGraph(graph);
-
+  free(dist);
+  free(prev);
   exit(EXIT_SUCCESS);
 }
 
