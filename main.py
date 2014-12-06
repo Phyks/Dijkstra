@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
 from xml.etree import ElementTree as et
 import math
+import sys, os
+
 
 if __name__=="__main__":
-    tree = et.parse("maps/5eme_petit.osm")
+    if not (2 <= len(sys.argv) <= 3):
+        print("Usage : ")
+        print("\t{} osm_file [out_file] \n".format(sys.argv[0]))
+        sys.exit()
+
+    osm_file = sys.argv[1]
+    try:
+        tree = et.parse(osm_file)
+    except:
+        print("Impossible to open %s.", osm_file)
+        sys.exit()
+        
     root = tree.getroot()
     nodes = {}
     highway = []
@@ -53,4 +66,8 @@ if __name__=="__main__":
     graph += "{} {}\n".format(n_nodes, n_edges)
     graph += edges
 
-    print(graph)
+    if (len(sys.argv) == 3):
+        with open(sys.argv[2], "w") as f:
+            f.write(graph)
+    else:
+        print(graph)
