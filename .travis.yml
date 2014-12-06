@@ -1,2 +1,5 @@
-install: make get-deps zsh
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install zsh
+install: make get-deps
 language: c
