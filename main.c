@@ -68,6 +68,11 @@ graph_t *parse_input_file (char *file) {
         token = strtok(NULL, " ");
         edge[1] = atoi(token);
 
+        if (edge[0] >= vertices || edge[1] >= vertices) {
+          fprintf(stderr, "Invalid graph provided.\n");
+          exit(EXIT_FAILURE);
+        }
+
         token = strtok(NULL, " ");
         weight = atof(token);
 
