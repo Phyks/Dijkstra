@@ -72,7 +72,7 @@ void dijkstra(graph_t* G, int source, int* prev, int* dist){
         printf("\t\tSur l'arête %d->%d\n", u, v);
       }
       
-      if (states->states[v] != VISITED) {
+      if (!isState(states, v, VISITED)) {
 	d = dist[u] + edge->weight;
 	/* if this path gives a shorter way */
 	if (d < dist[v]) {
