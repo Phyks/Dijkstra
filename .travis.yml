@@ -1,1 +1,2 @@
+install: make get-deps zsh
 language: c
