@@ -1,5 +1,5 @@
 CC=gcc -g -Wall -Wextra
-CFLAGS=-std=c99 -Wall
+CFLAGS=-std=c99 -Wall -lm
 SHELL=/bin/zsh
 
 SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c fibonacci_heap.c

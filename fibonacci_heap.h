@@ -25,7 +25,6 @@ fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh);
 void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e);
-void fibonacciHeapRemove(fibonacci_heap_t *fh, int x);
 fibonacci_heap_element_t fibonacciHeapExtractMin(fibonacci_heap_t *fh);
 
 #endif  // _FIBONACCI_HEAP_H_
