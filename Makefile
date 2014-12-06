@@ -1,14 +1,18 @@
 CC=gcc -g -Wall -Wextra
-CFLAGS=-std=c99 -Wall
+CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs`
 SHELL=/bin/zsh
 
 SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c
+OBJECTS=$(SOURCES:%.c=%.o)
 EXECUTABLE=dijkstra
 
 all: $(SOURCES) $(EXECUTABLE)
 
-$(EXECUTABLE): $(SOURCES)
-	$(CC) $(CFLAGS) $(SOURCES) -o $(EXECUTABLE)
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+
+%.o: $(@:%.o=%.c)
+	echo -o $@ $^
 
 clean:
 	rm -rf $(EXECUTABLE)
