@@ -1,8 +1,9 @@
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <limits.h>
 
 #include "graph.h"
 #include "dijkstra.h"
@@ -46,7 +47,8 @@ graph_t *parse_input_file (char *file) {
 
   int vertices;
   int i = 0;
-  int edge[2], weight;
+  int edge[2];
+  double weight;
 
   graph_t *graph;
 
@@ -67,7 +69,7 @@ graph_t *parse_input_file (char *file) {
         edge[1] = atoi(token);
 
         token = strtok(NULL, " ");
-        weight = atoi(token);
+        weight = atof(token);
 
         addEdge(graph, edge[0], edge[1], weight);
       }
@@ -83,6 +85,27 @@ graph_t *parse_input_file (char *file) {
   return graph;
 }
 
+
+void pretty_print_float (float f) {
+  char s[50];
+  char *p;
+
+  sprintf(s, "%f", f);
+  for (p=s; *p; ++p) {
+    if ('.' == *p) {
+      while (*++p);
+      while ('0' == *--p) {
+        *p = '\0';
+      }
+      if ('.' == *p) {
+        *p = '\0';
+      }
+    }
+  }
+  printf("%s", s);
+}
+
+
 int main(int argc, char **argv) {
   if (argc < 2) {
     fprintf(stderr, "No input graph.\n\nUsage:\n\t");
@@ -93,23 +116,24 @@ int main(int argc, char **argv) {
 
   graph_t *graph = parse_input_file(argv[1]);
   int start = 0;
-  int* dist = (int*) safe_malloc(sizeof(int)*graph->nb_vertices);
-  int* prev = (int*) safe_malloc(sizeof(int)*graph->nb_vertices);
+  double *dist = (double*) safe_malloc(sizeof(double)*graph->nb_vertices);
+  int *prev = (int*) safe_malloc(sizeof(int)*graph->nb_vertices);
   dijkstra(graph, start, prev, dist);
 
   for (int i=0; i<graph->nb_vertices; i++) {
-    fprintf(stdout, "%d\t", i);
-    if (dist[i] == INT_MAX)
-      fprintf(stdout, "-\t-\n");
-    else{
-      fprintf(stdout, "%d\t", dist[i]);
-      if(prev[i] == INT_MAX)           /* unreachable */
-        fprintf(stdout, "-\n");
+    printf("%d\t", i);
+    if (dist[i] == INFINITY)
+      printf("-\t-\n");
+    else {
+      pretty_print_float(dist[i]);
+      printf("\t");
+      if (prev[i] == INT_MAX)           /* unreachable */
+        printf("-\n");
       else
-        fprintf(stdout, "%d\n", prev[i]);
+        printf("%d\n", prev[i]);
     }
   }
-  
+
   freeGraph(graph);
   free(dist);
   free(prev);

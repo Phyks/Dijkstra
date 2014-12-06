@@ -4,7 +4,7 @@
 #include "utils.h"
 
 priority_queue_element_t priorityQueueExtractMin(priority_queue_t* P) {
-  int d_min = P->elements[0].dist;
+  float d_min = P->elements[0].dist;
   int i_min = -1;
   priority_queue_element_t e, e_min;
   for (int i = 0; i < P->nb_members; i++) {
@@ -42,7 +42,7 @@ void priorityQueueRemove(priority_queue_t* P, int x) {
 }
 
 void priorityQueueInsert(priority_queue_t* P, priority_queue_element_t e) {
-  
+
   P->nb_members++;
   P->elements = (priority_queue_element_t*)
     safe_realloc(P->elements, sizeof(priority_queue_element_t)*P->nb_members);
@@ -52,7 +52,7 @@ void priorityQueueInsert(priority_queue_t* P, priority_queue_element_t e) {
 
 void priorityQueueUpdate(priority_queue_t* P, priority_queue_element_t e) {
   int u = e.u;
-  int d = e.dist;
+  float d = e.dist;
   for (int i = 0; i < P->nb_members; i++) {
     if (P->elements[i].u == u) { /* update */
       P->elements[i].dist = d;

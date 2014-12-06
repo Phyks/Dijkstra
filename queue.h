@@ -6,7 +6,7 @@
 
 typedef struct priority_queue_element {
   int u;
-  int dist;
+  double dist;
 } priority_queue_element_t;
 
 typedef struct priority_queue {

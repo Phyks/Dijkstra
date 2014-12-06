@@ -38,7 +38,7 @@ void freeGraph(graph_t *graph) {
       for (int v = 0; v < graph->nb_vertices; v++) {
         adjacency_list_node_t *item =
           graph->adjacency_list_array[v].head;
-        
+
         while (item != NULL) {
           adjacency_list_node_t *tmp = item;
           item = item->next;
@@ -69,7 +69,7 @@ int *getNodes(graph_t const *graph) {
 /**
  * Add an edge to a graph.
  */
-void addEdge(graph_t *graph, int src, int dest, int weight) {
+void addEdge(graph_t *graph, int src, int dest, double weight) {
   // Create a new adjacency list node
   adjacency_list_node_t *newNode = (adjacency_list_node_t *) safe_malloc(sizeof(adjacency_list_node_t));
   if (newNode == NULL) {
@@ -95,7 +95,7 @@ void printGraph(graph_t const *graph) {
     adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
     printf("\n%d: ", i);
     while (adjacency_list_item != NULL) {
-      printf("%d (%d) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
+      printf("%d (%f) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
       adjacency_list_item = adjacency_list_item->next;
     }
     printf("NULL\n");

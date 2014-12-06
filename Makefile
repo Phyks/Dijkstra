@@ -9,8 +9,8 @@ EXECUTABLE=dijkstra
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
 
-%.o: $(@:%.o=%.c)
-	$(CC) $(CFLAGS) -c $(@:%.o=%.c)
+.o:
+	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
 	rm -rf $(EXECUTABLE)
