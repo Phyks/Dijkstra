@@ -6,13 +6,11 @@ SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c
 OBJECTS=$(SOURCES:%.c=%.o)
 EXECUTABLE=dijkstra
 
-all: $(SOURCES) $(EXECUTABLE)
-
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
 
 %.o: $(@:%.o=%.c)
-	echo -o $@ $^
+	$(CC) $(CFLAGS) -c $(@:%.o=%.c)
 
 clean:
 	rm -rf $(EXECUTABLE)
