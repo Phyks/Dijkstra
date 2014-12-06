@@ -10,7 +10,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
 
 .o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
+	$(CC) $(INCLUDES) -c $(CFLAGS) $< -o $@
 
 clean:
 	rm -rf $(EXECUTABLE)
