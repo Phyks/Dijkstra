@@ -23,7 +23,7 @@ test: $(EXECUTABLE)
 		./$(EXECUTABLE) $$i ; \
 		echo "Expected :" ; \
 		cat tests_outputs/$${i#tests/} ; \
-		if (diff <(./$(EXECUTABLE) $$i) <(cat tests_outputs/$${i#tests/}) > /dev/null) \
+		if (diff <(./$(EXECUTABLE) $$i 2>&1) <(cat tests_outputs/$${i#tests/}) > /dev/null 2>&1) \
 		then \
 			echo "" ; \
 			printf '\033[1;32;40m' ; \
