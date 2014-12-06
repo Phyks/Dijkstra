@@ -3,21 +3,14 @@
 #include <stdlib.h>
 
 #include "fibonacci_heap.h"
+#include "utils.h"
 
 /**
  * Create an empty Fibonacci heap.
  */
 fibonacci_heap_t *fibonacciHeapCreate() {
-  fibonacci_heap_t *fh = (fibonacci_heap_t *) malloc(sizeof(fibonacci_heap_t));
-  if(fh == NULL) {
-    fprintf(stderr, "Unable to allocate memory for the Fibonacci heap.\n");
-    exit(EXIT_FAILURE);
-  }
-  fibonacci_heap_element_t *root = (fibonacci_heap_element_t *) malloc(sizeof(fibonacci_heap_element_t));
-  if(root == NULL) {
-    fprintf(stderr, "Unable to allocate memory for the Fibonacci heap root.\n");
-    exit(EXIT_FAILURE);
-  }
+  fibonacci_heap_t *fh = (fibonacci_heap_t *) safe_malloc(sizeof(fibonacci_heap_t));
+  fibonacci_heap_element_t *root = (fibonacci_heap_element_t *) safe_malloc(sizeof(fibonacci_heap_element_t));
 
   root->parent = NULL;
   root->child = NULL;
@@ -148,7 +141,7 @@ static void fibonacciHeapLinkHeaps(fibonacci_heap_t *fh, fibonacci_heap_element_
   fibonacciHeapAppend(x, y);
 }
 static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
-  fibonacci_heap_element_t **A = (fibonacci_heap_element_t **)malloc(sizeof(fibonacci_heap_element_t *) * floor(log(fh->nb_nodes) / log((1+sqrt(5)) / 2)));
+  fibonacci_heap_element_t **A = (fibonacci_heap_element_t **) safe_malloc(sizeof(fibonacci_heap_element_t *) * floor(log(fh->nb_nodes) / log((1+sqrt(5)) / 2)));
   for (int i = 0; i < floor(log(fh->nb_nodes) / log((1+sqrt(5)) / 2)); i++) {
     A[i] = NULL;
   }
