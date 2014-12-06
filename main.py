@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 from xml.etree import ElementTree as et
-import math
-import sys, os
+from math import cos, sin, atan2, pi, sqrt
+import sys
 
+def degToRad(deg):
+    return deg/360*2*pi
 
-if __name__=="__main__":
+if __name__ == "__main__":
     if not (2 <= len(sys.argv) <= 3):
         print("Usage : ")
         print("\t{} osm_file [out_file] \n".format(sys.argv[0]))
@@ -55,8 +57,18 @@ if __name__=="__main__":
             u = nodes[u_id]
             v = nodes[v_id]
 
-            dist = math.sqrt((float(u.get("lat")) - float(v.get("lat")))**2 +
-                             (float(u.get("lon")) - float(v.get("lon")))**2)
+            lat1 = degToRad(float(u.get("lat"))) /2
+            lat2 = degToRad(float(v.get("lat"))) / 2
+            lon1 = degToRad(float(u.get("lon"))) / 2
+            lon2 = degToRad(float(v.get("lon"))) / 2
+            lon = (lon1+lon2) / 2
+            
+            dlat = lat2-lat1
+            dlon = lon2-lon1
+            a = pow(sin(dlat)/2, 2) + cos(lat1)*cos(lat2)*pow(sin(dlon)/2, 2)
+            c = 2*atan2(sqrt(a), sqrt(1-a))
+            R = 6371000
+            dist = R*c
             
             edges += "{}\t{}\t{}\n".format(u_id, v_id, dist)
             edges += "{}\t{}\t{}\n".format(v_id, u_id, dist)
