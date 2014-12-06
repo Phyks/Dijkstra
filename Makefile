@@ -1,5 +1,6 @@
 CC=gcc -g -Wall -Wextra
 CFLAGS=-std=c99 -Wall
+SHELL=/bin/zsh
 
 SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c
 EXECUTABLE=dijkstra
@@ -19,6 +20,16 @@ test: $(EXECUTABLE)
 		echo "Got :" ; \
 		./$(EXECUTABLE) $$i ; \
 		echo "Expected :" ; \
-		cat tests_outputs/$${i#tests/}; \
+		cat tests_outputs/$${i#tests/} ; \
+		if (diff <(./$(EXECUTABLE) $$i) <(cat tests_outputs/$${i#tests/}) > /dev/null) \
+		then \
+			printf '\033[1;32;40m' ; \
+			echo "[Passed]" ; \
+			printf '\033[0m' ; \
+		else \
+			printf '\033[1;31;40m' ; \
+			echo "[Failed]" ; \
+			printf '\033[0m' ; \
+		fi ; \
 		echo "" ; \
 	done
