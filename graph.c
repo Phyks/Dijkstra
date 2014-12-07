@@ -121,30 +121,29 @@ graph_t *reverseGraph(graph_t const *graph) {
  *
  * Note: nodes param is here to specify the order of iteration in the main loop.
  */
-static void dfsVisit(graph_t const *graph, int u, states_t *states, int *date, int *d, int *pi, int *f) {
+static void dfsVisit(graph_t const *graph, int u, states_t *states, int *date, int *d, int *pi, associative_array_t *f) {
   markNode(states, u, VISITING);
   (*date)++;
 
   d[u] = *date;
 
-  for (int v = 0; v < graph->adjacency_list_array[u].nb_members; v++) {
-    if (isState(states, v, NOT_VISITED)) {
-      pi[v] = u;
-      dfsVisit(graph, v, states, date, d, pi, f);
+  adjacency_list_node_t *v = graph->adjacency_list_array[u].head;
+  while (v != NULL) {
+    if (isState(states, v->vertex, NOT_VISITED)) {
+      pi[v->vertex] = u;
+      dfsVisit(graph, v->vertex, states, date, d, pi, f);
     }
+    v = v->next;
   }
 
   markNode(states, u, VISITED);
   (*date)++;
-  f[u] = *date;
+  f[u].value = *date;
+  f[u].key = u;
 }
-void dfs (graph_t const *graph, int *d, int *pi, int *f, int const *nodes) {
+void dfs (graph_t const *graph, int *d, int *pi, associative_array_t *f, int const *nodes) {
   int date = 0;
   states_t *states = initStates(graph);  // Set all nodes to not visited
-
-  pi = (int *) safe_malloc(sizeof(int) * graph->nb_vertices);
-  f = (int *) safe_malloc(sizeof(int) * graph->nb_vertices);
-  d = (int *) safe_malloc(sizeof(int) * graph->nb_vertices);
 
   for (int u = 0; u < graph->nb_vertices; u++) {
     pi[u] = -1;
@@ -164,10 +163,10 @@ void dfs (graph_t const *graph, int *d, int *pi, int *f, int const *nodes) {
  * Check whether the graph is connected or not.
  */
 static int compare_int_desc(void const *a, void const *b) {
-   int const *pa = a;
-   int const *pb = b;
+   associative_array_t const *pa = a;
+   associative_array_t const *pb = b;
 
-   return *pb - *pa;
+   return pb->value - pa->value;
 }
 static int count(int *array, int nb_items, int value) {
   int nb = 0;
@@ -181,22 +180,34 @@ static int count(int *array, int nb_items, int value) {
   return nb;
 }
 bool isConnected(graph_t const *graph) {
-  int *d = NULL, *pi = NULL, *f = NULL;
+  int *d = safe_malloc(sizeof(int) * graph->nb_vertices);
+  int *pi = safe_malloc(sizeof(int) * graph->nb_vertices);
+  associative_array_t *f = safe_malloc(sizeof(associative_array_t) * graph->nb_vertices);
+  int *nodes = getNodes(graph);
 
-  dfs(graph, d, pi, f, getNodes(graph));
+  dfs(graph, d, pi, f, nodes);
   free(pi);
   free(d);
+  free(nodes);
 
   graph_t *reversed_graph = reverseGraph(graph);
 
-  int *fR = NULL;
-  qsort(f, graph->nb_vertices, sizeof(int), compare_int_desc);
-  dfs(reversed_graph, d, pi, fR, f);
+  associative_array_t *fR = safe_malloc(sizeof(associative_array_t) * graph->nb_vertices);
+  d = safe_malloc(sizeof(int) * graph->nb_vertices);
+  pi = safe_malloc(sizeof(int) * graph->nb_vertices);
+  qsort(f, graph->nb_vertices, sizeof(associative_array_t), compare_int_desc);
+
+  nodes = safe_malloc(sizeof(int) * graph->nb_vertices);
+  for (int i = 0; i < graph->nb_vertices; i++) {
+    nodes[i] = f[i].key;
+  }
+  dfs(reversed_graph, d, pi, fR, nodes);
 
   freeGraph(reversed_graph);
   free(f);
   free(fR);
   free(d);
+  free(nodes);
 
   int nb = count(pi, graph->nb_vertices, -1);
   free(pi);
