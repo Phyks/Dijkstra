@@ -75,6 +75,15 @@ fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh) {
 }
 
 
+/*
+ */
+fibonacci_heap_element_t *fibonacciHeapNewElement(int key) {
+  fibonacci_heap_element_t *e = safe_malloc(sizeof(fibonacci_heap_element_t));
+  e->key = key;
+  return e;
+}
+
+
 /**
  * Add a node to the roots of a Fibonacci heap.
  */
