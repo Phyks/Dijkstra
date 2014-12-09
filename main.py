@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""This program converts osm maps to an entry point for the dijktra program."""
 from xml.etree import ElementTree as et
 from math import cos, sin, atan2, pi, sqrt
 import sys
@@ -25,19 +26,17 @@ if __name__ == "__main__":
     relation = []
     
     # get all the points
+    child_id = 0
     for child in root.findall("node"):
         # fill the node dictionary with the nodes
-        nodes[child.get("id")] = child
+        nodes[child.get("id")] = (child, child_id)
+        child_id += 1
 
-    # get all the roads
+    # get all the roads (way with child that has the attribute k = hway)
     for way in root.findall('.//way/*[@k="highway"]/..'):
         highway.append(way)
         road = way.find('./*[@k="name"]')
-        # if road != None:
-        #     print(road.get("v"))
-        # else:
-        #     print(way.get("id"))
-
+        
     # create the graph in the format
     graph = ""
     edges = ""
@@ -53,28 +52,29 @@ if __name__ == "__main__":
         for u_ref, v_ref in zip(node_list[:-1], node_list[1:]):
             u_id = u_ref.get("ref")
             v_id = v_ref.get("ref")
-            
-            u = nodes[u_id]
-            v = nodes[v_id]
 
-            lat1 = degToRad(float(u.get("lat"))) /2
+            u,u_id = nodes[u_id]
+            v,v_id = nodes[v_id]
+
+            lat1 = degToRad(float(u.get("lat"))) / 2
             lat2 = degToRad(float(v.get("lat"))) / 2
             lon1 = degToRad(float(u.get("lon"))) / 2
             lon2 = degToRad(float(v.get("lon"))) / 2
             lon = (lon1+lon2) / 2
-            
+
             dlat = lat2-lat1
             dlon = lon2-lon1
             a = pow(sin(dlat)/2, 2) + cos(lat1)*cos(lat2)*pow(sin(dlon)/2, 2)
             c = 2*atan2(sqrt(a), sqrt(1-a))
             R = 6371000
             dist = R*c
-            
-            edges += "{}\t{}\t{}\n".format(u_id, v_id, dist)
-            edges += "{}\t{}\t{}\n".format(v_id, u_id, dist)
+
+            # for now, any path is bidirectional
+            edges += "{} {} {}\n".format(u_id, v_id, dist)
+            edges += "{} {} {}\n".format(v_id, u_id, dist)
 
             n_edges += 2
-            
+
     graph += "{} {}\n".format(n_nodes, n_edges)
     graph += edges
 
