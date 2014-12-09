@@ -2,7 +2,7 @@
 import sys
 from subprocess import PIPE, Popen
 
-PROG = "./Debug"
+PROG = "./dijkstra"
 OUT = "raw_out"
 PNG = "out.png"
 
