@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "graph.h"
 #include "dijkstra.h"
@@ -40,8 +41,7 @@ char *strstrip(char *s) {
  *
  * @todo Read better the file, to be able to parse large files.
  */
-graph_t *parse_input_file (char *file) {
-  FILE *fp;
+graph_t *parse_input_file (FILE* fp) {
   char line[1024];
   char *token;
 
@@ -52,7 +52,6 @@ graph_t *parse_input_file (char *file) {
 
   graph_t *graph;
 
-  fp = fopen(file, "r");
   if (fp != NULL) {
     while (fgets(line, 1024, fp) != NULL) {
       if (i == 0) {
@@ -112,14 +111,36 @@ void pretty_print_float (float f) {
 
 
 int main(int argc, char **argv) {
-  if (argc < 2) {
-    fprintf(stderr, "No input graph.\n\nUsage:\n\t");
+  FILE* in;
+
+  if (argc == 1) {
+    in = stdin;
+  }
+  else if (argc >= 2) {
+    if (access(argv[1], R_OK) == 0) {/* file exists */
+      in = fopen(argv[1], "r");
+      
+      /* try to open the next file */
+      if (in == NULL) {
+	fprintf(stderr, "Couldn't open %s.\n", argv[1]);
+	exit(EXIT_FAILURE);
+      }
+    }
+    else {
+      fprintf(stderr, "Invalid input graph.\n\nUsage:\n\t");
+      fprintf(stderr, "%s", argv[0]);
+      fprintf(stderr, " graph\n");
+      exit(EXIT_FAILURE);
+    }
+  }
+  else {
+    fprintf(stderr, "Invalid command line.\n\nUsage:\n\t");
     fprintf(stderr, "%s", argv[0]);
     fprintf(stderr, " graph\n");
     exit(EXIT_FAILURE);
   }
 
-  graph_t *graph = parse_input_file(argv[1]);
+  graph_t *graph = parse_input_file(in);
 
   if (!isConnected(graph)) {
     fprintf(stderr, "Input graph is not connected.\n");
