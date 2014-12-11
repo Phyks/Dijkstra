@@ -1,7 +1,7 @@
 from libc.stdlib cimport malloc
 from cpython cimport array
 from pyjkstra cimport dijkstra as c_dijkstra
-from pyjkstra cimport graph_t, createGraph, freeGraph, printGraph, addEdge
+from pyjkstra cimport graph_t, createGraph, freeGraph, printGraph, addEdge, INT_MAX
 
 cdef class c_Graph:
     '''Cython class that implements a graph'''
@@ -21,8 +21,6 @@ cdef class c_Graph:
         printGraph(self.thisptr)
         return ""
 
-    cdef graph_t* getPointer(self):
-        return self.thisptr
 
     @property
     def nb_vertices(self):
@@ -31,6 +29,35 @@ cdef class c_Graph:
     def addEdge(self, int src, int dest, double weight):
         addEdge(self.thisptr, src, dest, weight)
 
+    def dijkstra (self, int s):
+        # Convert the python object into the c_graph cdef class
+        # cdef c_Graph graph = <c_Graph>self.c_graph
+        cdef int l = self.thisptr.nb_vertices
+
+        cdef int* prev_arg = <int*>malloc(sizeof(int)*l)
+        cdef double* dist_arg = <double*>malloc(sizeof(double)*l)
+
+        c_dijkstra(self.thisptr, s, prev_arg, dist_arg)
+
+        prev_out = []
+        dist_out = []
+        # Convert back from C-types to python object
+        for i in range(l):
+            if (prev_arg[i] == INT_MAX):
+                val = float("inf")
+            else:
+                val = prev_arg[i]
+                
+            prev_out.append(val)
+
+            
+            if (dist_arg[i] == INT_MAX):
+                val = float("inf")
+            else:
+                val = dist_arg[i]
+                
+            dist_out.append(val)
+        return (prev_out, dist_out)
 
 class Graph:
     ''' A graph represented as an adjacency list.'''
@@ -62,13 +89,4 @@ class Graph:
         (prev, dist) with prev the antecedent in the path and dist the distance of
         each node from the start
         '''
-        # Convert the python object into the c_graph cdef class
-        cdef c_Graph graph = <c_Graph>self.c_graph
-        cdef graph_t * ptr = c_Graph.getPointer(c_Graph)
-        cdef l = c_Graph.nb_vertices
-
-        cdef int* prev_arg = <int*>malloc(sizeof(int)*l)
-        cdef double* dist_arg = <double*>malloc(sizeof(double)*l)
-
-        c_dijkstra(ptr, s, prev_arg, dist_arg)
-
+        return self.c_graph.dijkstra(s)

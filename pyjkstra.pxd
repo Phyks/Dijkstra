@@ -19,3 +19,6 @@ cdef extern from "graph.h":
 
 cdef extern from "dijkstra.h":
     void dijkstra(graph_t* G, int s, int* prev, double* dist)
+
+cdef extern from "limits.h":
+    int INT_MAX
