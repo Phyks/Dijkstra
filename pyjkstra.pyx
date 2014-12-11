@@ -1,4 +1,4 @@
-from libc.stdlib cimport malloc
+from libc.stdlib cimport malloc, free
 from cpython cimport array
 from pyjkstra cimport dijkstra as c_dijkstra
 from pyjkstra cimport graph_t, createGraph, freeGraph, printGraph, addEdge, INT_MAX
@@ -57,6 +57,9 @@ cdef class c_Graph:
                 val = dist_arg[i]
                 
             dist_out.append(val)
+
+        free(dist_arg)
+        free(prev_arg)
         return (prev_out, dist_out)
 
 class Graph:
