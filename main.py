@@ -18,7 +18,7 @@ class osmMap:
         except:
             print("Impossible to open {}.".format(osm_file))
             sys.exit()
-            
+
 
     def updateRoads(self):
         root = self.tree.getroot()
@@ -72,12 +72,12 @@ class osmMap:
 
                 n_edges += 2
 
-            self.graph += "{} {}\n".format(n_nodes, n_edges)
-            self.graph += edges
-            
+        self.graph += "{} {}\n".format(n_nodes, n_edges)
+        self.graph += edges
+
         return self.graph
 
-        
+
 def degToRad(deg):
     return deg/360*2*pi
 
