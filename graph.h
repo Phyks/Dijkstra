@@ -18,7 +18,7 @@ typedef struct adjacency_list {  // Represents a node
 
 typedef struct graph {
   int nb_vertices;  // Number of vertices
- adjacency_list_t *adjacency_list_array;  // An array of adjacency lists
+  adjacency_list_t *adjacency_list_array;  // An array of adjacency lists
 } graph_t;
 
 graph_t *createGraph(int n);
