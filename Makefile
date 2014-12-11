@@ -1,10 +1,13 @@
 CC=gcc -g -Wall -Wextra
-CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs` -lm
+CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs` -lm -fPIC
 SHELL=/bin/zsh
 
 SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c fibonacci_heap.c
 OBJECTS=$(SOURCES:%.c=%.o)
 EXECUTABLE=dijkstra
+
+PYFLAGS=-pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python3.4m
+PYDEPS=graph.c utils.c states.c dijkstra.c queue.c
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
@@ -15,6 +18,7 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm -rf $(EXECUTABLE)
 	rm $(SOURCES:%.c=%.o)
+	rm pyjkstra.{so,o,c}
 
 test: $(EXECUTABLE)
 	@for i in tests/* ; do \
@@ -37,3 +41,10 @@ test: $(EXECUTABLE)
 		fi ; \
 		echo "" ; \
 	done
+
+pyjkstra.o: pyjkstra.pyx
+	cython pyjkstra.pyx
+	gcc  $(PYFLAGS) -c pyjkstra.c
+
+py: $(PYDEPS:%.c=%.o) pyjkstra.o
+	gcc -shared $(PYFLAGS) -o pyjkstra.so $^
