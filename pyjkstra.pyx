@@ -66,6 +66,7 @@ class Graph:
     ''' A graph represented as an adjacency list.'''
     c_graph = None
     def __init__(self, int n):
+        ''' n is the number of vertices.'''
         self.c_graph = c_Graph(n)
         
     def __del__(self):
@@ -79,6 +80,7 @@ class Graph:
         return self.c_graph.nb_vertices
 
     def addEdge(self, int src, int dest, double weight):
+        ''' Adds an edge to the graph from `src` to `dest` with weight `weight`.'''
         self.c_graph.addEdge(src, dest, weight)
 
 
@@ -93,3 +95,4 @@ class Graph:
         each node from the start
         '''
         return self.c_graph.dijkstra(s)
+        
