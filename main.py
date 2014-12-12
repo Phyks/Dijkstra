@@ -4,7 +4,12 @@ from xml.etree import ElementTree as et
 from math import cos, sin, atan2, pi, sqrt
 import sys
 from subprocess import PIPE, Popen
+import pyjkstra
 
+
+
+def degToRad(deg):
+    return deg/360*2*pi
 
 class osmMap:
     nodes = {}
@@ -18,7 +23,6 @@ class osmMap:
         except:
             print("Impossible to open {}.".format(osm_file))
             sys.exit()
-
 
     def updateRoads(self):
         root = self.tree.getroot()
@@ -72,14 +76,11 @@ class osmMap:
 
                 n_edges += 2
 
-        self.graph += "{} {}\n".format(n_nodes, n_edges)
+        self.graph += "{}\n".format(n_nodes)
         self.graph += edges
 
         return self.graph
 
-
-def degToRad(deg):
-    return deg/360*2*pi
 
 if __name__ == "__main__":
     if not (2 <= len(sys.argv) <= 3):
