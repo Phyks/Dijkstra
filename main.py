@@ -63,7 +63,6 @@ class osmMap:
         funNNode: takes a number of node
         funAdd: takes two nodes and a distance
         """
-
         funNNode(len(self.nodes))
 
         # iterate over all ways
@@ -76,25 +75,24 @@ class osmMap:
                 u_id = min(u_ref.get("ref"), v_ref.get("ref"))
                 v_id = max(u_ref.get("ref"), v_ref.get("ref"))
 
-                try:
-                    index = self.distances[u_id][0].index(v_id)
-                    dist = self.distances[u_id][1][index]
-                except KeyError:  # self.distances[u_id] doesn't exist
+                if u_id in self.distances:
+                    if v_id in self.distances[u_id][0]:
+                        dist = self.distances[u_id][1][self.distances[u_id][1].index(v_id)]
+                    else:
+                        u, u_id = self.nodes[u_id]
+                        v, v_id = self.nodes[v_id]
+                        
+                        dist = self.distance(u, v)
+
+                        self.distances[u_id][0].append(v_id)
+                        self.distances[u_id][1].append(dist)
+                else:
                     u, u_id = self.nodes[u_id]
                     v, v_id = self.nodes[v_id]
 
                     dist = self.distance(u, v)
                     
                     self.distances[u_id] = ([v_id], [dist])
-                    
-                except ValueError:  # v_id not encountered
-                    u, u_id = self.nodes[u_id]
-                    v, v_id = self.nodes[v_id]
-
-                    dist = self.distance(u, v)
-                    
-                    self.distances[u_id][0].append(v_id)
-                    self.distances[u_id][1].append(dist)
 
                 # for now, any path is bidirectional
                 funAdd(u_id, v_id, dist)
@@ -129,10 +127,17 @@ if __name__ == "__main__":
     if (len(sys.argv) == 3):
         with open(sys.argv[2], "w") as f:
             f.write(graph)
-    else:
-        print(graph)
+    # else:
+    #     print(graph)
 
     # Calling dijkstra
-    # print("Calling dot to process it…")
-    # call = Popen(["./dijkstra"], stdin=PIPE, stdout=PIPE)
-    # (out, err) = call.communicate(input=bytes(graph, 'UTF-8'))
+    print("Creating graph…")
+    graph = pyjkstra.Graph(len(osm.nodes))
+    print("Filling graph…")
+    fun1 = lambda x: True
+    fun2 = lambda u, v, d: graph.addEdge(u, v, d)
+    
+    osm.parse(fun1, fun2)
+
+    print(graph)
+    
