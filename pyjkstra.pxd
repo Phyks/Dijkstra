@@ -22,3 +22,4 @@ cdef extern from "dijkstra.h":
 
 cdef extern from "limits.h":
     int INT_MAX
+
