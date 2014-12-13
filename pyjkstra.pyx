@@ -44,7 +44,7 @@ cdef class c_Graph:
         # Convert back from C-types to python object
         for i in range(l):
             if (prev_arg[i] == INT_MAX):
-                val = float("inf")
+                val = None
             else:
                 val = prev_arg[i]
                 
@@ -52,7 +52,7 @@ cdef class c_Graph:
 
             
             if (dist_arg[i] == INT_MAX):
-                val = float("inf")
+                val = None
             else:
                 val = dist_arg[i]
                 
