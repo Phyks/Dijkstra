@@ -54,37 +54,6 @@ void fibonacciHeapFree(fibonacci_heap_t *fh) {
 
 
 /**
- * Print a Fibonacci heap.
- * TODO
- */
-void fibonacciHeapPrint(fibonacci_heap_t *fh) {
-  fibonacci_heap_element_t *level = fh->root;
-  fibonacci_heap_element_t *parallel = level;
-  printf("-------- Fibonacci heap ----------\n");
-  while (level != NULL) {
-    if (level->left != level) {  // If not a single child
-      parallel = level;
-      while (parallel != NULL) {  // Go to the left on each level
-        printf("%d ", parallel->key);
-        parallel = parallel->left;
-      }
-      parallel = level->right;
-      while (parallel != NULL) {  // Then, to the right
-        printf("%d ", parallel->key);
-        parallel = parallel->right;
-      }
-    }
-    else {
-      printf("%d", level->key);
-    }
-    printf("\n");
-    level = level->child;
-  }
-  printf("----------------------------------\n\n");
-}
-
-
-/**
  * Check whether a Fibonacci heap is empty or not.
  */
 int fibonacciHeapIsEmpty(fibonacci_heap_t const *fh) {
