@@ -85,15 +85,18 @@ void addEdge(graph_t *graph, int src, int dest, double weight) {
 /**
  * Pretty print
  */
+void printNode(graph_t const *graph, int n) {    
+  adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[n].head;
+  printf("\n%d: ", n);
+  while (adjacency_list_item != NULL) {
+    printf("%d (%f) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
+    adjacency_list_item = adjacency_list_item->next;
+  }
+  printf("NULL\n");
+}
 void printGraph(graph_t const *graph) {
   for (int i = 0; i < graph->nb_vertices; i++) {
-    adjacency_list_node_t *adjacency_list_item = graph->adjacency_list_array[i].head;
-    printf("\n%d: ", i);
-    while (adjacency_list_item != NULL) {
-      printf("%d (%f) -> ", adjacency_list_item->vertex, adjacency_list_item->weight);
-      adjacency_list_item = adjacency_list_item->next;
-    }
-    printf("NULL\n");
+    printNode(graph, i);
   }
 }
 
