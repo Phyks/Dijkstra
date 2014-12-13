@@ -20,12 +20,13 @@ typedef struct fibonacci_heap {
 
 fibonacci_heap_t *fibonacciHeapCreate();
 void fibonacciHeapFree(fibonacci_heap_t *fh);
+void fibonacciHeapPrint(fibonacci_heap_t *fh);
 int fibonacciHeapIsEmpty(fibonacci_heap_t const *fh);
 fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh);
 fibonacci_heap_element_t *fibonacciHeapNewElement(int key);
 void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e);
-fibonacci_heap_element_t fibonacciHeapExtractMin(fibonacci_heap_t *fh);
+fibonacci_heap_element_t *fibonacciHeapExtractMin(fibonacci_heap_t *fh);
 
 #endif  // _FIBONACCI_HEAP_H_
