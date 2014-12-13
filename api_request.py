@@ -33,7 +33,7 @@ def distance(u, v):
     return dist
 
 
-def nearestRoad(latitude, longitude, radius):
+def nearestRoad(latitude, longitude, radius, number_to_get=2):
     ''' Returns the 2 closest points from the coordinates given.'''
     req = '''<osm-script output="json">
   <query type="way">
@@ -42,6 +42,7 @@ def nearestRoad(latitude, longitude, radius):
   </query>
   <union>
     <item/>
+    <recurse type="down"/>
   </union>
   <print/>
 </osm-script>'''.format(lat=latitude, long=longitude, rad=radius)
@@ -49,16 +50,22 @@ def nearestRoad(latitude, longitude, radius):
     r = requests.post("http://overpass-api.de/api/interpreter",
                       headers=headers, data=req)
     assert (r.status_code == 200)
+    json = r.json()["elements"]
 
-    ways = r.json()["elements"]
-    nodes = []
-    for way in ways:
-        nodes += way['nodes']
+    nodes = dict()
+    for node in json:
+        if node['type'] == 'node':
+            d = distance((latitude, longitude),
+                         (node['lat'], node['lon']))
+            nodes[d] = int(node['id'])
 
-    return nodes
+    keys = list(nodes.keys())
+    keys.sort()
+
+    return [(k, nodes[k]) for k in keys[:number_to_get]]
 
 
-def nearestTransport(latitude, longitude, radius):
+def nearestTransport(latitude, longitude, radius, number_to_get=2):
     req = '''
 <osm-script output="json" timeout="25">
   <union into="_">
@@ -85,25 +92,47 @@ def nearestTransport(latitude, longitude, radius):
 
     stations = dict()
     for station in json:
-        d = distance((latitude, longitude),
-                     (station['lat'], station['lon']))
-        stations[d] = station['id']
+        if station['type'] == 'node':
+            d = distance((latitude, longitude),
+                         (station['lat'], station['lon']))
+            
+            stations[d] = {'id': int(station['id']),
+                           'lat': float(station['lat']),
+                           'lon': float(station['lon'])}
 
     keys = list(stations.keys())
     keys.sort()
 
-    return [stations[k] for k in keys[:2]]
+    return [stations[k] for k in keys[:number_to_get]]
 
 
 def coordinates(adress):
-    url = "http://nominatim.openstreetmap.org/search?q={}&format=json".format("+".join(adress.split()))
-    print("requesting", url)
+    url = "http://nominatim.openstreetmap.org/search?q=" + \
+          "{}&format=json".format("+".join(adress.split()))
     r = requests.get(url)
     assert (r.status_code == 200)
     json = r.json()[0]
-    name = json["display_name"]
     lat = json["lat"]
     lon = json["lon"]
+    id = int(json["osm_id"])
 
-    print("Found {} at ({},{})".format(name, lat, lon))
-    return (lat, lon)
+    return (lat, lon, id)
+
+
+def processClosest(id, lat, lon, radius, get_id, add, n=2):
+    ''' Get the n nearest nodes on a road next to the node id at
+    position lat,lon. It then applies the add function on the result.'''
+    r = nearestRoad(lat, lon, radius, n)
+    # count the number of paths found to reach the target
+    counter = 0
+    for dist, id2 in r:
+        try:
+            # Try cowardly to get the id from the osm file loaded
+            u = get_id(id)
+            v = get_id(id2)
+            add(u, v, dist)
+            counter += 1
+        except:
+            pass
+
+    return (counter > 0)
