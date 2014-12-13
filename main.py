@@ -214,8 +214,7 @@ if __name__ == "__main__":
         nodes = ar.nearestRoad(lat, lon, radius=10, number_to_get=2)
         args += [{'from': start,
                   'to': id,
-                  'd': dist} for id, dist in nodes]
-
+                  'dist': dist} for id, dist in nodes]
 
         # find the nearest nodes
         reachables = []
@@ -241,10 +240,11 @@ if __name__ == "__main__":
     # link the start point to the nearest road
     ar.processClosest(args, osm.intern_id, graph.addEdge)
 
-    print("Départ:\t{}".format(start))
+    print("Départ :\t{}".format(start))
     for station in reachables:
         print("Station:\t{}".format(station['id']))
     # Calculate all paths
+
     print(tt(), "Finding ways…")
     start_intern = osm.intern_id(start)
     prev, dist = graph.dijkstra(start_intern)
