@@ -134,7 +134,7 @@ def processClosest(ls, get_id, add):
             id1 = get_id(_from)
             id2 = get_id(_to)
             add(id1, id2, _d)
-            nearest += d
+            nearest += {'from': d['from'], 'to': d['to'], 'dist': d['dist']}
         except:
             pass
 
