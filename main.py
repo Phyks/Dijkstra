@@ -8,9 +8,28 @@ import pyjkstra
 import time
 from api_request import distance
 import api_request as ar
+from os.path import isfile
+try:
+    import cpickle as pic
+except:
+    import pickle as pic
+
 
 def tt():
-    return round(time.process_time(),2)
+    return round(time.process_time(), 2)
+
+
+def pickle(pickleFile, values):
+    with open(pickleFile, "bw") as output:
+        pic.dump(values, output)
+
+
+def unpickle(pickleFile):
+    if not isfile(pickleFile):
+        return None
+    with open(pickleFile, "br") as input:
+        return pic.load(input)
+
 
 class osmMap:
     # remaped dictionary of all nodes (0 ≤ n < #nodes)
@@ -19,7 +38,7 @@ class osmMap:
     roads = []
     # stores the distances between two nodes u<v as two lists:
     # distances[u] = ([v0, v1, …], [d0, d1, …])
-    distances = dict()         
+    distances = dict()
 
     def __init__(self, osm_file):
         try:
@@ -59,9 +78,6 @@ class osmMap:
                 id = int(nd.get("ref"))
                 self.nodes[id]["roads"].append(name)
 
-            
-
-    
     def parse(self, funNNode, funAdd):
         """ This method runs through the data and applies funNNode to the number
         of nodes and funAdd for each segment of each way. It doesn't return
@@ -91,7 +107,7 @@ class osmMap:
                         u_id = self.nodes[u_id]['id']
                         v = self.nodes[v_id]['val']
                         v_id = self.nodes[v_id]['id']
-                        
+
                         dist = distance(u, v)
 
                         self.distances[u_id][0].append(v_id)
@@ -101,7 +117,7 @@ class osmMap:
                     v, v_id = self.nodes[v_id]['val'], self.nodes[v_id]['id']
 
                     dist = distance(u, v)
-                    
+
                     self.distances[u_id] = ([v_id], [dist])
 
                 # for now, any path is bidirectional
@@ -133,8 +149,13 @@ class osmMap:
 
     def intern_id(self, key):
         ''' Return the intern id of a key.'''
-        if key:
-            return self.nodes[key]["id"]
+        try:
+            if key:
+                return self.nodes[key]["id"]
+            else:
+                return None
+        except:
+            return None
 
     def find_road(self, key0, key1):
         ''' Returns the first road in common with key0, key1.'''
@@ -150,71 +171,107 @@ class osmMap:
             return "Arrivée"
 
 if __name__ == "__main__":
-    if not (len(sys.argv) == 3):
+    if not (len(sys.argv) >= 3):
         print("Opens an OSM data file, converts it and sends it to the" +
               "./dijkstra program.")
         print("Usage : ")
-        print("\t{} osm_file start_address".format(sys.argv[0]))
+        print("\t{} osm_file start_address [dump file]".format(sys.argv[0]))
         sys.exit()
 
-    osm = osmMap(sys.argv[1])
+    mapPath = sys.argv[1]
+    address = sys.argv[2]
+    if len(sys.argv) >= 4:
+        pickleFile = sys.argv[3]
+    else:
+        pickleFile = ".pickle"
 
-    #############################
-    ####    Creating graph   ####
-    #############################
-    print(tt(), "Creating graph…")
+    # create an osmMap object
+    osm = osmMap(sys.argv[1])
     graph = pyjkstra.Graph(len(osm.nodes))
+
+    # Fill it with data from the map
     print(tt(), "Filling graph…")
     fun1 = lambda x: True
     fun2 = lambda u, v, d: graph.addEdge(u, v, d)
-
     osm.parse(fun1, fun2)
 
-    ##########################################################
-    ####    Looking for the closest road from endpoints   ####
-    ##########################################################
-    print(tt(), "Requesting address…")
-    lat, lon, start = ar.coordinates(sys.argv[2])
-    ar.processClosest(start, lat, lon, 10,
-                      osm.intern_id, graph.addEdge)
+    # Check for the existence of a .pickle file and if yes, compare the
+    # address in it
+    data = unpickle(pickleFile)
+    # if the address was already got
+    args = []
+    reachables = {}
+    if data and data['address'] == address:
+        print(tt(), "Loading from file…")
+        lat, lon, start = data['start']
+        reachables = data['reachables']
+        args = data['args']
 
-    ntransport = 10
-    print(tt(), "Getting {} nearest transports…".format(ntransport))
-    transports = ar.nearestTransport(lat, lon, 1000, ntransport)
-    # function that adds the edge v->u instead of u->v
-    revertEdge = lambda u, v, d: graph.addEdge(v, u, d)
-    reachables = []
-    for node in transports:
-        if (ar.processClosest(node['id'], node['lat'], node['lon'], 10,
-                              osm.intern_id, revertEdge)):
-            reachables.append(node)
-    transports = reachables
+    else:
+        print(tt(), "Requesting address and nearest transports…")
+        lat, lon, start = ar.coordinates(address)
+        transports = ar.nearestTransport(lat, lon, 500, -1)
+        nodes = ar.nearestRoad(lat, lon, radius=10, number_to_get=2)
+        args += [{'from': start,
+                  'to': id,
+                  'd': dist} for id, dist in nodes]
 
-    ############################################
-    ####    Processing with the algorithm   ####
-    ############################################
+
+        # find the nearest nodes
+        reachables = []
+        for node in transports:
+            road = ar.nearestRoad(node['lat'], node['lon'],
+                                  radius=10, number_to_get=2)
+            # store them from road to node (endpoint)
+            args += [{'from': id,
+                      'to': node['id'],
+                      'dist': d} for id, d in road]
+            for id, d in road:
+                if id in osm.nodes:
+                    reachables.append(node)
+                    break
+
+        print(tt(), "Saving it to {}…".format(pickleFile))
+        data = {'address': address,
+                'start': (lat, lon, start),
+                'reachables': reachables,
+                'args': args}
+        pickle(pickleFile, data)
+
+    # link the start point to the nearest road
+    ar.processClosest(args, osm.intern_id, graph.addEdge)
+
+    print("Départ:\t{}".format(start))
+    for station in reachables:
+        print("Station:\t{}".format(station['id']))
+    # Calculate all paths
     print(tt(), "Finding ways…")
     start_intern = osm.intern_id(start)
     prev, dist = graph.dijkstra(start_intern)
 
-    ###################################
-    ####    Outputting the paths   ####
-    ###################################
-
+    # Printing out
     print(tt(), "Printing ways ")
-    for end in transports:
+    for end in reachables:
         node = osm.intern_id(end['id'])
+
         print("Chemin vers {}.".format(end))
         if node is None or prev[node] is None:
             print("Pas de chemin trouvé.")
-            break
-        
+            continue
+
         while node != start_intern:
             c = osm.real_id(node)
             p = osm.real_id(prev[node])
-            road = osm.find_road(c, p)
+            if p == start:
+                road = osm.find_road(c, c)
+            elif c == end['id']:
+                road = osm.find_road(p, p)
+            else:
+                road = osm.find_road(c, p)
+
             print("{}\t->\t{}\t({}m)\t[{}]".format(c, p,
-                                                   round(dist[node],1),
+                                                   round(dist[node], 1),
                                                    road))
             if node != start_intern:
                 node = prev[node]
+        print()
