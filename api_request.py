@@ -7,7 +7,7 @@ def degToRad(deg):
 
 
 def distance(u, v):
-    if type(u) is tuple and type(v) is tuple :
+    if type(u) is tuple and type(v) is tuple:
         r_lat1 = float(u[0])
         r_lon1 = float(u[1])
         r_lat2 = float(v[0])
@@ -38,7 +38,7 @@ def nearestRoad(latitude, longitude, radius, number_to_get=2):
     req = '''<osm-script output="json">
   <query type="way">
     <around lat="{lat}" lon="{long}" radius="{rad}"/>
-    <has-kv k="highway" modv="" v=""/>
+    <has-kv k="highway" modv="" regv="residential|tertiary|secondary|primary"/>
   </query>
   <union>
     <item/>
@@ -95,7 +95,7 @@ def nearestTransport(latitude, longitude, radius, number_to_get=2):
         if station['type'] == 'node':
             d = distance((latitude, longitude),
                          (station['lat'], station['lon']))
-            
+
             stations[d] = {'id': int(station['id']),
                            'lat': float(station['lat']),
                            'lon': float(station['lon'])}
