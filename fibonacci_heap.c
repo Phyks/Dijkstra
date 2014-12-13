@@ -9,7 +9,8 @@
  * Create an empty Fibonacci heap.
  */
 fibonacci_heap_t *fibonacciHeapCreate() {
-  fibonacci_heap_t *fh = (fibonacci_heap_t *) safe_malloc(sizeof(fibonacci_heap_t));
+  fibonacci_heap_t *fh =
+    (fibonacci_heap_t *) safe_malloc(sizeof(fibonacci_heap_t));
 
   fh->nb_nodes = 0;
   fh->min = NULL;
@@ -102,9 +103,10 @@ fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh) {
 /*
  * Crate an empty new element ready to be inserted in a fibonacci heap.
  */
-fibonacci_heap_element_t *fibonacciHeapNewElement(int key) {
+fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int vertex) {
   fibonacci_heap_element_t *e = safe_malloc(sizeof(fibonacci_heap_element_t));
   e->key = key;
+  e->vertex = vertex;
   e->degree = 0;
   e->child = NULL;
   e->parent = NULL;
