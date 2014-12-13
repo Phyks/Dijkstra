@@ -128,6 +128,7 @@ void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node) 
   else {
     if (root->right != root) {  // Actual root is not a single element
       while (root->right != NULL) {
+        printf("infinite loop\n");
         root = root->right;
       }
     }
@@ -158,13 +159,15 @@ void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *nod
         node->right->right = node->right;
         node->right->left = node->right;
       }
+      fh->root = node->right;
     }
     else {  // node->left is not NULL in this case
       node->left->right = node->right;
       if (node->left->right == NULL && node->left->left == NULL) {
-        node->left->right = node->right;
-        node->left->left = node->right;
+        node->left->right = node->left;
+        node->left->left = node->left;
       }
+      fh->root = node->left;
     }
   }
   --fh->nb_nodes;
