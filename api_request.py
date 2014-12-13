@@ -62,7 +62,7 @@ def nearestRoad(latitude, longitude, radius, number_to_get=2):
     keys = list(nodes.keys())
     keys.sort()
 
-    return [(k, nodes[k]) for k in keys[:number_to_get]]
+    return [(nodes[dist], dist) for dist in keys[:number_to_get]]
 
 
 def nearestTransport(latitude, longitude, radius, number_to_get=2):
@@ -119,20 +119,23 @@ def coordinates(adress):
     return (lat, lon, id)
 
 
-def processClosest(id, lat, lon, radius, get_id, add, n=2):
-    ''' Get the n nearest nodes on a road next to the node id at
-    position lat,lon. It then applies the add function on the result.'''
-    r = nearestRoad(lat, lon, radius, n)
-    # count the number of paths found to reach the target
-    counter = 0
-    for dist, id2 in r:
+def processClosest(ls, get_id, add):
+    ''' ls is a list of dictionaries in the form :
+    'from': …, 'to': …, 'dist': …
+
+    The function applies get_id on each element of from and to and then
+    add them using the add function.
+    '''
+    nearest = []
+    for d in ls:
         try:
-            # Try cowardly to get the id from the osm file loaded
-            u = get_id(id)
-            v = get_id(id2)
-            add(u, v, dist)
-            counter += 1
+            _from, _to, _d = d['from'], d['to'], d['dist']
+            print(_from, _to, _d)
+            id1 = get_id(_from)
+            id2 = get_id(_to)
+            add(id1, id2, _d)
+            nearest += d
         except:
             pass
 
-    return (counter > 0)
+    return nearest
