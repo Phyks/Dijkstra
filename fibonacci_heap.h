@@ -20,7 +20,6 @@ typedef struct fibonacci_heap {
 
 fibonacci_heap_t *fibonacciHeapCreate();
 void fibonacciHeapFree(fibonacci_heap_t *fh);
-void fibonacciHeapPrint(fibonacci_heap_t *fh);
 int fibonacciHeapIsEmpty(fibonacci_heap_t const *fh);
 fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh);
 fibonacci_heap_element_t *fibonacciHeapNewElement(int key);
