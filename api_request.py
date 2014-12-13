@@ -98,7 +98,8 @@ def nearestTransport(latitude, longitude, radius, number_to_get=2):
 
             stations[d] = {'id': int(station['id']),
                            'lat': float(station['lat']),
-                           'lon': float(station['lon'])}
+                           'lon': float(station['lon']),
+                           'all': station}
 
     keys = list(stations.keys())
     keys.sort()

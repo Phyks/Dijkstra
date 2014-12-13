@@ -227,7 +227,7 @@ if __name__ == "__main__":
                       'dist': d} for id, d in road]
             for id, d in road:
                 if id in osm.nodes:
-                    reachables.append(node)
+                    reachables += [node]
                     break
 
         print(tt(), "Saving it to {}…".format(pickleFile))
@@ -242,7 +242,7 @@ if __name__ == "__main__":
 
     print("Départ :\t{}".format(start))
     for station in reachables:
-        print("Station:\t{}".format(station['id']))
+        print("Station:\t{} ({})".format(station['all']['tags']['name'], station['id']))
     # Calculate all paths
 
     print(tt(), "Finding ways…")
@@ -254,9 +254,9 @@ if __name__ == "__main__":
     for end in reachables:
         node = osm.intern_id(end['id'])
 
-        print("Chemin vers {}.".format(end))
+        print("Chemin vers {}.".format(end['all']['tags']['name']))
         if node is None or prev[node] is None:
-            print("Pas de chemin trouvé.")
+            print("Pas de chemin trouvé.\n")
             continue
 
         while node != start_intern:
@@ -269,7 +269,7 @@ if __name__ == "__main__":
             else:
                 road = osm.find_road(c, p)
 
-            print("{}\t->\t{}\t({}m)\t[{}]".format(c, p,
+            print("{}\t<-\t{}\t({}m)\t[{}]".format(c, p,
                                                    round(dist[node], 1),
                                                    road))
             if node != start_intern:
