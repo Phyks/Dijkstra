@@ -14,6 +14,7 @@ cdef extern from "graph.h":
 
     graph_t *createGraph(int n);
     void freeGraph(graph_t* graph);
+    void printNode(graph_t* graph, int n);
     void printGraph(graph_t* graph);
     void addEdge(graph_t *graph, int src, int dest, double weight)
 

@@ -1,7 +1,7 @@
 from libc.stdlib cimport malloc, free
 from cpython cimport array
 from pyjkstra cimport dijkstra as c_dijkstra
-from pyjkstra cimport graph_t, createGraph, freeGraph, printGraph, addEdge, INT_MAX
+from pyjkstra cimport graph_t, createGraph, freeGraph, printGraph, printNode, addEdge, INT_MAX
 
 cdef class c_Graph:
     '''Cython class that implements a graph'''
@@ -25,6 +25,10 @@ cdef class c_Graph:
     @property
     def nb_vertices(self):
         return self.thisptr.nb_vertices
+
+    def get(self, int n):
+        printNode(self.thisptr, n)
+        
 
     def addEdge(self, int src, int dest, double weight):
         addEdge(self.thisptr, src, dest, weight)
@@ -83,7 +87,10 @@ class Graph:
         ''' Adds an edge to the graph from `src` to `dest` with weight `weight`.'''
         self.c_graph.addEdge(src, dest, weight)
 
+    def get(self, int n):
+        return self.c_graph.get(n)
 
+    
     def dijkstra (self, int s):
         ''' Implement the dijkstra path-finding algorithm.
         Parameters:
