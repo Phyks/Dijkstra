@@ -31,14 +31,36 @@ clean:
 	rm $(SOURCES:%.c=%.o)
 	rm pyjkstra{,_opt}.{so,o,c}
 
-test: $(EXECUTABLE)
+test_queue: $(EXECUTABLE_QUEUE)
 	@for i in tests/* ; do \
 		echo "$$i :" ; \
 		echo "Got :" ; \
-		./$(EXECUTABLE) $$i ; \
+		./$(EXECUTABLE_QUEUE) $$i ; \
 		echo "Expected :" ; \
 		cat tests_outputs/$${i#tests/} ; \
-		if (diff <(./$(EXECUTABLE) $$i 2>&1) <(cat tests_outputs/$${i#tests/}) > /dev/null 2>&1) \
+		if (diff <(./$(EXECUTABLE_QUEUE) $$i 2>&1) <(cat tests_outputs/$${i#tests/}) > /dev/null 2>&1) \
+		then \
+			echo "" ; \
+			printf '\033[1;32;40m' ; \
+			echo "[Passed]" ; \
+			printf '\033[0m' ; \
+		else \
+			echo "" ; \
+			printf '\033[1;31;40m' ; \
+			echo "[Failed]" ; \
+			printf '\033[0m' ; \
+		fi ; \
+		echo "" ; \
+	done
+
+test_fib: $(EXECUTABLE_FIB)
+	@for i in tests/* ; do \
+		echo "$$i :" ; \
+		echo "Got :" ; \
+		./$(EXECUTABLE_FIB) $$i ; \
+		echo "Expected :" ; \
+		cat tests_outputs/$${i#tests/} ; \
+		if (diff <(./$(EXECUTABLE_FIB) $$i 2>&1) <(cat tests_outputs/$${i#tests/}) > /dev/null 2>&1) \
 		then \
 			echo "" ; \
 			printf '\033[1;32;40m' ; \
