@@ -41,7 +41,6 @@ static void fibonacciHeapFreeSubTree(fibonacci_heap_element_t *root) {
     }
     else {
       while (current->left != NULL) {
-        printf("ok\n");
         current = current->left;
       }
       while (current != NULL) {
@@ -98,25 +97,26 @@ fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int vertex) {
 void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node) {
   fibonacci_heap_element_t *root = fh->root;
   node->parent = NULL;
-  if (root == NULL) {  // Empty heap
-    node->left = node;
-    node->right = node;
-    fh->root = node;
+
+  fh->root = node;
+
+  if (fh->root != NULL) {  // Non-empty heap, updat the lists
+    if (root->right == root) {
+      root->left = NULL;
+      root->right = NULL;
+    }
+    node->right = root;
+    node->left = root->left;
+    if (root->left != NULL) {
+      root->left->right = node;
+    }
+    root->left = node;
   }
   else {
-    if (root->right != root) {  // Actual root is not a single element
-      while (root->right != NULL) {
-        printf("infinite loop\n");
-        root = root->right;
-      }
-    }
-    else {
-      root->left = NULL;
-    }
-    root->right = node;
-    node->left = root;
-    node->right = NULL;
+    node->left = node;
+    node->right = node;
   }
+
   ++fh->nb_nodes;
 }
 
@@ -169,26 +169,24 @@ void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e) {
  * Extract the minimum from a Fibonacci heap.
  */
 static void fibonacciHeapAppend(fibonacci_heap_element_t *x, fibonacci_heap_element_t *y) {
-  y->left = y;
-  y->right = y;
+  fibonacci_heap_element_t *child = x->child;
   y->parent = x;
-  /* Make y a child of x and increment degree of x */
-  if (x->child == NULL) {
-    x->child = y;
+  x->child = y;
+  if (child != NULL) {  // Update lists
+    if (child->right == child) {
+      child->left = NULL;
+      child->right = NULL;
+    }
+    y->right = child;
+    y->left = child->left;
+    if (child->left != NULL) {
+      child->left->right = y;
+    }
+    child->left = y;
   }
   else {
-    fibonacci_heap_element_t *child = x->child;
-    if (child->right != child) {
-      while (child->right != NULL) {
-        child = child->right;
-      }
-    }
-    else {
-      child->left = NULL;
-    }
-    child->right = y;
-    y->left = child;
-    y->right = NULL;
+    y->left = y;
+    y->right = y;
   }
   x->degree++;
 }
@@ -207,6 +205,7 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   fibonacci_heap_element_t *w;
   w = fh->root;
   // Go all the way to the left
+  // TODO: To be more easily readable, we first go to the left, and then come backward. However, we are performing to much operations and we could only explore on the left and on the right.
   if (w->left != w) {
     while (w->left != NULL) {
       w = w->left;
