@@ -1,0 +1,276 @@
+\documentclass{article}
+\usepackage[frenchb]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{minted}
+\title{Recherche de chemin --- Algorithme de Dijkstra avec tas de Fibonacci et applications}
+\author{Corentin Cadiou \and Lucas Verney}
+
+\begin{document}
+\maketitle
+Le but de ce projet était de réaliser une implémentation de
+l'algorithme de Dijkstra de recherche de chemin utilisant des tas de
+Fibonacci.
+
+Cette implémentation a été réalisée dans le langage C et est détaillée
+dans les Sections~\ref{sec:algor-de-dijkstra} et~\ref{sec:tas-de-fibonacci}. Un ``wrapper''
+python3 a été créé pour pouvoir interagir facilement avec
+l'algorithme. Se référer à la
+Section~\ref{sec:expos-des-fonct}. Enfin, un script Python qui
+lit une carte OpenStreetMap, le convertit en un format lisible
+internalement et effectue des recherches dedans.
+
+\section{Algorithme de Dijkstra}\label{sec:algor-de-dijkstra}
+L'algorithme utilisé a été l'algorithme de Dijkstra. Cet algorithme a
+une complexité algorithmique de $O(|E| + |V|\log|C|)$ dans le cas
+d'une implémentation avec une queue de prioirité, comme par exemple
+avec un tas de Fibonacci (ou une queue de Brodal).
+
+Le principe de l'algorithme est de parcourir progressivement tout le
+graphe. On ajoute initialement tous les nœuds associé à une distance
+infinie à une file de priorité. La source est attribuée à une distance
+nulle. On initialise de plus une liste contenant les nœuds déjà visités.
+
+On itère ensuite sur la file de priorité jusqu'à ce qu'elle soit vide.
+À chaque itération, le nœud $u$ de la file le plus proche de la source
+est extrait de la file et marqué comme visité.
+Pour tous ses voisins $v$ non déjà visités, on
+calcule la distance du chemin allant de la source $v$ en passant par
+$u$. S'il est plus faible que la distance $v$ à la source sans passer
+par $v$, on met à jour cette distance et on note que le prédecesseur
+de $v$ est $u$.
+
+Une preuve (succinte et partielle) que l'algorithme est correcte est
+donnée ci-dessous. On peut le prouver en supposant que
+l'itération marque les nœuds visités avec la distance minimale et que
+tous les nœuds non visités sont plus loin que la plus faible des
+distances dans la file de priorité. 
+À l'itération suivante, un nœud voisin du nœud dans la file le plus
+proche de la source est sélectionné, sa distance est mise à jour. S'il
+devient alors l'élément le plus proche de la source, il ne peut être
+atteint en moins de distance depuis les nœuds visités dans la file
+puisqu'il est plus proche que tous les autres. De même, il n'est pas
+atteignable par un nœud non encore visité par hypothèse. S'il n'est
+pas le plus proche, soit il existe un chemin plus court l'atteignant
+et il sera alors trouvé, soit le chemin proposé initialement était le
+bon et on le saura quand tous les nœuds dans la file seront à une
+distance supérieure que celle calculée. On a donc conservé l'hypothèse
+par itération.
+Comme celle-ci est vraie pour la première itération (la distance la
+plus courte de la source à ses voisin est la distance entre ceux-ci),
+elle est vraie pour toutes les itérations. On a donc trouvé la plus
+courte distance entre la source et chacun des nœuds du graphe.
+
+On peut implémenter l'algorithme avec une queue supportant les trois
+opérations suivantes :
+\begin{enumerate}
+  \item ajout d'une clé (la distance du nœud à la source), avec
+    décoration (le nœud) 
+    \mint{python}|add(node, distance)|
+  \item mise à jour d'une clé pour un nœud donné
+    \mint{python}|add(node, new_distance)|
+  \item récupération du minimum et suppression de la file
+    \mint{python}|extract_min()|
+\end{enumerate}
+\begin{minted}[linenos,frame=lines]{python}
+def Dijkstra(Graph, source):            # Source is the startpoint of the algorithm
+   dist[source] = 0                     # Initialisation
+   for vertex v in Graph:           
+       if v != source:
+           dist[v]     = Infinity       # Unknown distance from source to v
+           previous[v] = None           # Predecessor of v
+       Q.add(v, dist[v])
+
+   while Q is not empty:                # The main loop
+       u      = Q.extract_min()         # Remove and return best vertex
+       u.mark = scanned
+       for v in u.neighbours:
+           if v.mark is not scanned:
+               alt = dist[u] + length(u, v) 
+               if alt < dist[v]
+                   dist[v]     = alt
+                   previous[v] = u
+                   Q.update(v, alt)
+
+   return previous
+\end{minted}
+\section{Tas de Fibonacci}\label{sec:tas-de-fibonacci}
+\section{Exposition des fonctionnalités en
+  Python}\label{sec:expos-des-fonct}
+Pour rendre l'interaction avec l'algorithme plus aisée ainsi que pour
+profiter des fonctionnalités plus haut niveau de Python, non
+pertinentes d'un point de vue algorithmique (comme la lecture d'un
+fichier XML), un ``wrapper'' python a été écrit en utilisant
+Cython. Ce ``wrapper'' expose une classe python appelée \verb|Graph|
+représentant un graphe et qui donne accès au nombre de nœuds
+(\verb|nb_vertices|), propose une méthode pour ajouter des arêtes
+(\verb|addEdge|) ainsi que d'afficher le graphe, ou les voisins d'un
+nœud (\verb|get|). La méthode appelle en réalité des fonctions C et
+s'occupe uniquement de l'interfaçage entre les deux langages.
+
+La classe propose aussi une méthode \verb|dijkstra| qui lance
+l'algorithme sur le graphe construit. On a donc exposé entièrement
+tous les outils nécessaires à l'exploitation de l'algorithme. On
+trouvera le code dans l'Annexe~\ref{sec:code-du-wrapper}.
+\section{Application: recherche de chemin vers les transports publics
+  les plus proches}\label{sec:appl-rech-de}
+Une fois le ``wrapper'' écrit, il a été possible d'utiliser les
+fonctionnalités haut niveau du python comme la lecture du format XML
+(pour les cartes OpenStreetMap) et du JSON (pour les requêtes de l'API
+OpenStreetMap pour trouver les adresses).
+
+Pour cela, le script Python commence par lire le fichier OSM. Il
+récupère toutes les balises \verb|node| au format :
+\begin{minted}{xml}
+<node id="703217417" lat="48.8445203" lon="2.3439455" ... />
+\end{minted}
+et les renumérote entre $0$ et $n_\mathrm{nodes}-1$. Ces \verb|node|
+seront considérés comme les nœuds du graphe. Elles correspondent à des
+intersections de rues ou des points particuliers (arrêts de bus,
+monuments, limites d'un bâtiment, ).
+
+La deuxième étape consiste à ajouter au graphe les arêtes,
+c'est-à-dire les routes. Celles-ci sont représentées comme suit :
+\begin{minted}{xml}
+<way id="4217181" visible="true" …>
+ <nd ref="25033471"/> <!-- Intersection rue d'Ulm, rue Érasme -->
+ <nd ref="25033484"/>
+ <nd ref="25033485"/>
+ <tag k="highway" v="residential"/>
+ <tag k="name" v="Rue Érasme"/>
+</way>
+\end{minted}
+Le chemin est formé d'une ligne brisée composée par la succession des nodes.
+Les routes n'ayant pas de \verb|tag| avec la valeur \verb|k='highway'|
+ne sont pas considérés (ce sont des bâtiments, des monuments, …). Nous
+avons ajouté au graphe chacun des couples successifs de nodes, avec
+comme distance :
+\begin{align*}
+  D & = 2 R_\mathrm{earth}\ \mathrm{atan} \left( \frac{\sqrt{a}}{\sqrt{1-a}} \right) \\
+  a & = \left( \frac{\sin(\Delta_\mathrm{lat})}{2} \right)^2 +
+      \cos(\mathrm{lat_1})\cos(\mathrm{lat_2}) \left( \frac{\sin(\Delta_\mathrm{lon})}{2} \right)^2
+\end{align*}
+\appendix
+\section{Code du wrapper}\label{sec:code-du-wrapper}
+Le wrapper utilise deux classes, l'une en Cython (lignes 7 à 72) qui
+intéragit directement avec le code C et l'autre en Python pur (lignes
+75 à 109), qui intéragit avec la classe Cython (celle-ci ne permettant
+pas toutes les fonctionnalités du Python). ``from pyjkstra cimport …''
+est une routine Cython qui importe le fichier ``pyjkstra.pxd''
+contenant les headers dans lesquels trouver les fonctions C appelées.
+\begin{minted}[linenos,frame=lines]{cython}
+from libc.stdlib cimport malloc, free
+from cpython cimport array
+from pyjkstra cimport dijkstra as c_dijkstra
+from pyjkstra cimport graph_t, createGraph, freeGraph
+from pyjkstra cimport printGraph, printNode, addEdge, INT_MAX
+
+cdef class c_Graph:
+    '''Cython class that exposes a graph'''
+    cdef graph_t * thisptr
+
+    def __cinit__(self, int n):
+        ''' Initialises a C pointer to the graph structure.'''
+        self.thisptr = createGraph(n)
+        if self.thisptr is NULL:
+            raise MemoryError
+
+    def __dealloc__(self):
+        ''' Free the malloced memory. '''        
+        if self.thisptr is not NULL:
+            freeGraph(self.thisptr)
+        
+    def __str__(self):
+        ''' Print a representation of self.'''
+        # Bad hack, it prints but returns an empty string …
+        printGraph(self.thisptr)
+        return ""
+
+    @property
+    def nb_vertices(self):
+        return self.thisptr.nb_vertices
+
+    def get(self, int n):
+        printNode(self.thisptr, n)
+
+    def addEdge(self, int src, int dest, double weight):
+        addEdge(self.thisptr, src, dest, weight)
+
+    def dijkstra (self, int s):
+        ''' Converts the Python objects to and from C variables and
+        call the algorithm. '''
+
+        cdef int l = self.thisptr.nb_vertices
+
+        # Malloc arrays for return values of the dijkstra algorithm 
+        cdef int* prev_arg = <int*>malloc(sizeof(int)*l)
+        cdef double* dist_arg = <double*>malloc(sizeof(double)*l)
+
+        # Call the algorithm
+        c_dijkstra(self.thisptr, s, prev_arg, dist_arg)
+
+        prev_out = []
+        dist_out = []
+        # Convert back from C-types to python object
+        for i in range(l):
+            if (prev_arg[i] == INT_MAX):
+                val = None
+            else:
+                val = prev_arg[i]
+                
+            prev_out.append(val)
+
+            
+            if (dist_arg[i] == INT_MAX):
+                val = None
+            else:
+                val = dist_arg[i]
+                
+            dist_out.append(val)
+
+        # Free C arrays
+        free(dist_arg)
+        free(prev_arg)
+        return (prev_out, dist_out)
+
+# This is the pure Python class that implements all "methods" of our graph
+class Graph:
+    ''' A graph represented as an adjacency list.'''
+    c_graph = None
+    def __init__(self, int n):
+        ''' n is the number of vertices.'''
+        self.c_graph = c_Graph(n)
+        
+    def __del__(self):
+        del self.c_graph
+        
+    def __str__(self):
+        return self.c_graph.__str__()
+    
+    @property
+    def nb_vertices(self):
+        return self.c_graph.nb_vertices
+
+    def addEdge(self, int src, int dest, double weight):
+        ''' Adds an edge to the graph from `src` to `dest` with weight `weight`.'''
+        self.c_graph.addEdge(src, dest, weight)
+
+    def get(self, int n):
+        return self.c_graph.get(n)
+
+    def dijkstra (self, int s):
+        ''' Implement the dijkstra path-finding algorithm.
+        Parameters:
+        G    dijkstra.Graph    a python representation of a graph
+        s    int               the starting point of the algorithm
+    
+        Returns:
+        (prev, dist) with prev the antecedent in the path and dist the distance of
+        each node from the start
+        '''
+        return self.c_graph.dijkstra(s)
+\end{minted}
+
+\section*{}
+\end{document}
