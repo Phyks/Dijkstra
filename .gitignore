@@ -4,3 +4,4 @@ Debug
 dijkstra
 .pickle
 __pycache__
+pyjkstra.c
