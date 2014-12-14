@@ -277,8 +277,6 @@ fibonacci_heap_element_t *fibonacciHeapExtractMin(fibonacci_heap_t *fh) {
       fh->min = z->right;
       fibonacciHeapConsolidate(fh);
     }
-
-    fh->nb_nodes--;
   }
 
   return z;
