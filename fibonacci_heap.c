@@ -96,7 +96,7 @@ fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int from, int to) {
 /**
  * Add a node to the roots of a Fibonacci heap.
  */
-void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node) {
+void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node, int count) {
   fibonacci_heap_element_t *root = fh->root;
   node->parent = NULL;
 
@@ -119,7 +119,7 @@ void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node) 
     node->right = node;
   }
 
-  ++fh->nb_nodes;
+  fh->nb_nodes += count;
 }
 
 
@@ -128,7 +128,7 @@ void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node) 
  *
  * User must manually free.
  */
-void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node) {
+void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node, int count) {
   if (node == node->right) {
     fh->root = NULL;
   }
@@ -150,7 +150,7 @@ void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *nod
       fh->root = node->left;
     }
   }
-  --fh->nb_nodes;
+  fh->nb_nodes -= count;
 }
 
 
@@ -158,7 +158,7 @@ void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *nod
  * Insert an element in a Fibonacci heap.
  */
 void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e) {
-  fibonacciHeapAddRoot(fh, e);
+  fibonacciHeapAddRoot(fh, e, 1);
 
   if (fh->min == NULL || e->key < fh->min->key) {
     fh->min = e;
@@ -169,7 +169,7 @@ void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e) {
 /**
  * Extract the minimum from a Fibonacci heap.
  */
-static void fibonacciHeapAppend(fibonacci_heap_t *fh, fibonacci_heap_element_t *x, fibonacci_heap_element_t *y) {
+static void fibonacciHeapAppend(fibonacci_heap_element_t *x, fibonacci_heap_element_t *y) {
   fibonacci_heap_element_t *child = x->child;
   y->parent = x;
   x->child = y;
@@ -190,11 +190,10 @@ static void fibonacciHeapAppend(fibonacci_heap_t *fh, fibonacci_heap_element_t *
     y->right = y;
   }
   x->degree++;
-  ++fh->nb_nodes;
 }
 static void fibonacciHeapLinkHeaps(fibonacci_heap_t *fh, fibonacci_heap_element_t *y, fibonacci_heap_element_t *x) {
-  fibonacciHeapDeleteRoot(fh, y);
-  fibonacciHeapAppend(fh, x, y);
+  fibonacciHeapDeleteRoot(fh, y, 0);
+  fibonacciHeapAppend(x, y);
 }
 static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   const int max_deg = (int) floor(log(fh->nb_nodes) / log((1+sqrt(5)) / 2)) + 1;
@@ -239,7 +238,7 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   fh->min = NULL;
   for (int i = 0; i < max_deg; i++) {
     if (A[i] != NULL) {
-      fibonacciHeapAddRoot(fh, A[i]);
+      fibonacciHeapAddRoot(fh, A[i], 0);
       if (fh->min == NULL || A[i]->key < fh->min->key) {
         fh->min = A[i];
       }
@@ -255,21 +254,21 @@ fibonacci_heap_element_t *fibonacciHeapExtractMin(fibonacci_heap_t *fh) {
       if (x->left != x) {
         fibonacci_heap_element_t *tmp = x;
         while (tmp != NULL) {  // First, go left
-          fibonacciHeapAddRoot(fh, tmp);
+          fibonacciHeapAddRoot(fh, tmp, 0);
           tmp = tmp->left;
         }
         tmp = x->right;
         while (tmp != NULL) {  // Then, go right
-          fibonacciHeapAddRoot(fh, tmp);
+          fibonacciHeapAddRoot(fh, tmp, 0);
           tmp = tmp->right;
         }
       }
       else {
-        fibonacciHeapAddRoot(fh, x);
+        fibonacciHeapAddRoot(fh, x, 0);
       }
     }
 
-    fibonacciHeapDeleteRoot(fh, z);
+    fibonacciHeapDeleteRoot(fh, z, 1);
 
     if (z == z->right) {
       fh->min = NULL;
