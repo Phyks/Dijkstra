@@ -43,7 +43,6 @@ class osmMap:
     def __init__(self, osm_file):
         try:
             self.tree = et.parse(osm_file)
-
         except:
             print("Impossible to open {}.".format(osm_file))
             sys.exit()
