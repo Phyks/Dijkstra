@@ -56,15 +56,27 @@ graph_t *parse_input_file (FILE* fp) {
     while (fgets(line, 1024, fp) != NULL) {
       if (i == 0) {
         token = strtok(strstrip(line), " ");
+        if (token == NULL) {
+          fprintf(stderr, "Unable to parse input.\n");
+          exit(EXIT_FAILURE);
+        }
         vertices = atoi(token);
 
         graph = createGraph(vertices);
       }
       else {
         token = strtok(strstrip(line), " ");
+        if (token == NULL) {
+          fprintf(stderr, "Unable to parse input.\n");
+          exit(EXIT_FAILURE);
+        }
         edge[0] = atoi(token);
 
         token = strtok(NULL, " ");
+        if (token == NULL) {
+          fprintf(stderr, "Unable to parse input.\n");
+          exit(EXIT_FAILURE);
+        }
         edge[1] = atoi(token);
 
         if (edge[0] >= vertices || edge[1] >= vertices) {
@@ -73,6 +85,10 @@ graph_t *parse_input_file (FILE* fp) {
         }
 
         token = strtok(NULL, " ");
+        if (token == NULL) {
+          fprintf(stderr, "Unable to parse input.\n");
+          exit(EXIT_FAILURE);
+        }
         weight = atof(token);
 
         addEdge(graph, edge[0], edge[1], weight);
@@ -82,7 +98,7 @@ graph_t *parse_input_file (FILE* fp) {
     fclose(fp);
   }
   else {
-    fprintf(stderr, "Unable to open input file.\n");
+    fprintf(stderr, "Unable to parse input.\n");
     exit(EXIT_FAILURE);
   }
 
@@ -119,11 +135,11 @@ int main(int argc, char **argv) {
   else if (argc >= 2) {
     if (access(argv[1], R_OK) == 0) {/* file exists */
       in = fopen(argv[1], "r");
-      
+
       /* try to open the next file */
       if (in == NULL) {
-	fprintf(stderr, "Couldn't open %s.\n", argv[1]);
-	exit(EXIT_FAILURE);
+        fprintf(stderr, "Couldn't open %s.\n", argv[1]);
+        exit(EXIT_FAILURE);
       }
     }
     else {
