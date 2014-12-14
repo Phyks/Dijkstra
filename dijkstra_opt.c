@@ -31,7 +31,7 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
     }
     prev[i] = INT_MAX;
   }
-  
+
   markNode(states, source, VISITED);
 
   /* add all nodes going out of source to the heap */
@@ -44,21 +44,22 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
       printf("Dijkstra: insertion de %d-%d (%f).\n", source, v, d);
     }
     fibonacciHeapInsert(fh, fibonacciHeapNewElement(d, source, v));
-    
+
     /* next edge */
     edge = edge->next;
   }
- 
+
   if(DEBUG) {
     printf("Dijkstra: boucle while.\n");
   }
   /* iterate while the heap is not empty */
   while (!fibonacciHeapIsEmpty(fh)) {
     tmp = fibonacciHeapExtractMin(fh);
-    
+
     u = tmp->from;
     v = tmp->to;
     d = tmp->key;
+    free(tmp);
     if(DEBUG) {
       printf("\tExtraction de %d-%d (%f)\n", u, v, d);
     }
@@ -66,7 +67,7 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
       dist[v] = d;
       prev[v] = u;
       markNode(states, v, VISITED);
-      
+
       /* explore all edges going out of v */
       n = G->adjacency_list_array[v].nb_members;
       edge = G->adjacency_list_array[v].head;
@@ -81,7 +82,7 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
           printf("\t\t\t: insertion de %d-%d (%f).\n", v, w, d);
         }
         fibonacciHeapInsert(fh, fibonacciHeapNewElement(d, v, w));
-        
+
         /* next edge */
         edge = edge->next;
       }

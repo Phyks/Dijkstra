@@ -22,7 +22,6 @@ fibonacci_heap_t *fibonacciHeapCreate() {
 
 /**
  * Free a Fibonacci heap.
- * TODO
  */
 static void fibonacciHeapFreeSubTree(fibonacci_heap_element_t *root) {
   if (root == NULL) {
@@ -40,6 +39,7 @@ static void fibonacciHeapFreeSubTree(fibonacci_heap_element_t *root) {
       fibonacciHeapFreeSubTree(current);
     }
     else {
+      // TODO: To be more easily readable, we first go to the left, and then come backward. However, we are performing to much operations and we could only explore on the left and on the right.
       while (current->left != NULL) {
         current = current->left;
       }
@@ -245,6 +245,7 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
       }
     }
   }
+  free(A);
 }
 fibonacci_heap_element_t *fibonacciHeapExtractMin(fibonacci_heap_t *fh) {
   fibonacci_heap_element_t *z = fh->min;
