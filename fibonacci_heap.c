@@ -169,7 +169,7 @@ void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e) {
 /**
  * Extract the minimum from a Fibonacci heap.
  */
-static void fibonacciHeapAppend(fibonacci_heap_element_t *x, fibonacci_heap_element_t *y) {
+static void fibonacciHeapAppend(fibonacci_heap_t *fh, fibonacci_heap_element_t *x, fibonacci_heap_element_t *y) {
   fibonacci_heap_element_t *child = x->child;
   y->parent = x;
   x->child = y;
@@ -190,10 +190,11 @@ static void fibonacciHeapAppend(fibonacci_heap_element_t *x, fibonacci_heap_elem
     y->right = y;
   }
   x->degree++;
+  ++fh->nb_nodes;
 }
 static void fibonacciHeapLinkHeaps(fibonacci_heap_t *fh, fibonacci_heap_element_t *y, fibonacci_heap_element_t *x) {
   fibonacciHeapDeleteRoot(fh, y);
-  fibonacciHeapAppend(x, y);
+  fibonacciHeapAppend(fh, x, y);
 }
 static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   const int max_deg = (int) floor(log(fh->nb_nodes) / log((1+sqrt(5)) / 2)) + 1;
