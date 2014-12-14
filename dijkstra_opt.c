@@ -8,12 +8,12 @@
 #include "states.h"
 #include "utils.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 void dijkstra(graph_t* G, int source, int* prev, double* dist){
   fibonacci_heap_t* fh = fibonacciHeapCreate();
   fibonacci_heap_element_t* tmp;
-  int u, v, n;
+  int u, v, w,  n;
   double d;
   adjacency_list_node_t* edge;
 
@@ -24,49 +24,67 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
     printf("Dijkstra: initialisation des distances.\n");
   }
   for (int i = 0; i < G->nb_vertices; i++) {
-    if (i == source) 		/* distance from start point = 0 */
+    if (i == source)
       dist[i] = 0;
     else {
       dist[i] = INFINITY;
     }
     prev[i] = INT_MAX;
-    /* add it to the priority queue */
-    fibonacciHeapInsert(fh,
-                        fibonacciHeapNewElement(dist[i], i));
   }
+  
+  markNode(states, source, VISITED);
 
-
+  /* add all nodes going out of source to the heap */
+  edge = G->adjacency_list_array[source].head;
+  n = G->adjacency_list_array[source].nb_members;
+  for (int i = 0; i < n; i++) {
+    d = dist[source] + edge->weight;
+    v = edge->vertex;
+    if(DEBUG) {
+      printf("Dijkstra: insertion de %d-%d (%f).\n", source, v, d);
+    }
+    fibonacciHeapInsert(fh, fibonacciHeapNewElement(d, source, v));
+    
+    /* next edge */
+    edge = edge->next;
+  }
+ 
+  if(DEBUG) {
+    printf("Dijkstra: boucle while.\n");
+  }
+  /* iterate while the heap is not empty */
   while (!fibonacciHeapIsEmpty(fh)) {
     tmp = fibonacciHeapExtractMin(fh);
-    u = tmp->vertex;
-    markNode(states, u, VISITED);
-
+    
+    u = tmp->from;
+    v = tmp->to;
+    d = tmp->key;
     if(DEBUG) {
-      printf("\t -> Exploration depuis %d.\n", u);
+      printf("\tExtraction de %d-%d (%f)\n", u, v, d);
     }
-    /* explore all edges going out of u */
-    n = G->adjacency_list_array[u].nb_members;
-    edge = G->adjacency_list_array[u].head;
+    if (!isState(states, v, VISITED)) {
+      dist[v] = d;
+      prev[v] = u;
+      markNode(states, v, VISITED);
+      
+      /* explore all edges going out of v */
+      n = G->adjacency_list_array[v].nb_members;
+      edge = G->adjacency_list_array[v].head;
+      for (int i = 0; i < n; i ++) {
+        w = edge->vertex;
+        if(DEBUG) {
+          printf("\t\tSur l'arête %d-%d (%f)\n", v, w, edge->weight);
+        }
 
-    for (int i = 0; i < n; i ++) {
-      v = edge->vertex;
-
-      if(DEBUG) {
-        printf("\t\tSur l'arête %d->%d\n", u, v);
+        d = dist[v] + edge->weight;
+        if(DEBUG) {
+          printf("\t\t\t: insertion de %d-%d (%f).\n", v, w, d);
+        }
+        fibonacciHeapInsert(fh, fibonacciHeapNewElement(d, v, w));
+        
+        /* next edge */
+        edge = edge->next;
       }
-
-      if (!isState(states, v, VISITED)) {
-	d = dist[u] + edge->weight;
-	/* if this path gives a shorter way */
-	if (d < dist[v]) {
-	  dist[v] = d;
-	  prev[v] = u;
-	  fibonacciHeapInsert(fh,
-                              fibonacciHeapNewElement(v, d));
-	}
-      }
-      /* next neighbour */
-      edge = edge->next;
     }
   }
   freeStates(states);

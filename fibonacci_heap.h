@@ -2,7 +2,9 @@
 #define _FIBONACCI_HEAP_H_
 
 enum {NIL = -1};
-
+/** 
+ * Represents an edge in the graph, with its tip located at distance key.
+ */
 typedef struct fibonacci_heap_element {
   struct fibonacci_heap_element *parent;
   struct fibonacci_heap_element *child;
@@ -10,7 +12,9 @@ typedef struct fibonacci_heap_element {
   struct fibonacci_heap_element *right;
   int degree;
   float key;
-  int vertex;
+  /* Decoration */
+  int from;
+  int to;
 } fibonacci_heap_element_t;
 
 typedef struct fibonacci_heap {
@@ -23,7 +27,7 @@ fibonacci_heap_t *fibonacciHeapCreate();
 void fibonacciHeapFree(fibonacci_heap_t *fh);
 int fibonacciHeapIsEmpty(fibonacci_heap_t const *fh);
 fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh);
-fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int vertex);
+fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int from, int to);
 void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e);

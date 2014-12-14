@@ -75,18 +75,20 @@ fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh) {
 }
 
 
-/*
+/**
  * Crate an empty new element ready to be inserted in a fibonacci heap.
  */
-fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int vertex) {
+fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int from, int to) {
   fibonacci_heap_element_t *e = safe_malloc(sizeof(fibonacci_heap_element_t));
   e->key = key;
-  e->vertex = vertex;
   e->degree = 0;
   e->child = NULL;
   e->parent = NULL;
   e->left = NULL;
   e->right = NULL;
+  /* Decorations */
+  e->from = from;
+  e->to = to;
   return e;
 }
 
