@@ -9,7 +9,7 @@ typedef struct fibonacci_heap_element {
   struct fibonacci_heap_element *left;
   struct fibonacci_heap_element *right;
   int degree;
-  int key;
+  float key;
   int vertex;
 } fibonacci_heap_element_t;
 
