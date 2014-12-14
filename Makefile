@@ -2,12 +2,14 @@ CC=gcc -g -Wall -Wextra
 CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs` -lm -fPIC
 SHELL=/bin/zsh
 
-SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c fibonacci_heap.c
+SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c fibonacci_heap.c dijkstra_opt.c
 OBJECTS=$(SOURCES:%.c=%.o)
 EXECUTABLE=dijkstra
 
 PYFLAGS=-pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python3.4m
-PYDEPS=graph.c utils.c states.c dijkstra.c queue.c
+PYDEPS=graph.c utils.c states.c
+PYQUEUE=$(PYDEPS) queue.c dijkstra.c
+PYFIB=$(PYDEPS) fibonacci_heap.c dijkstra_opt.c
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
@@ -18,7 +20,7 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm -rf $(EXECUTABLE)
 	rm $(SOURCES:%.c=%.o)
-	rm pyjkstra.{so,o,c}
+	rm pyjkstra{,_opt}.{so,o,c}
 
 test: $(EXECUTABLE)
 	@for i in tests/* ; do \
@@ -43,8 +45,11 @@ test: $(EXECUTABLE)
 	done
 
 pyjkstra.o: pyjkstra.pyx
-	cython pyjkstra.pyx
+	cython $^
 	gcc  $(PYFLAGS) -c pyjkstra.c
 
-py: $(PYDEPS:%.c=%.o) pyjkstra.o
+pyqueue: $(PYQUEUE:%.c=%.o) pyjkstra.o
+	gcc -shared $(PYFLAGS) -o pyjkstra.so $^
+
+pyfib: $(PYFIB:%.c=%.o) pyjkstra.o
 	gcc -shared $(PYFLAGS) -o pyjkstra.so $^

@@ -10,6 +10,7 @@ typedef struct fibonacci_heap_element {
   struct fibonacci_heap_element *right;
   int degree;
   int key;
+  int vertex;
 } fibonacci_heap_element_t;
 
 typedef struct fibonacci_heap {
@@ -22,7 +23,7 @@ fibonacci_heap_t *fibonacciHeapCreate();
 void fibonacciHeapFree(fibonacci_heap_t *fh);
 int fibonacciHeapIsEmpty(fibonacci_heap_t const *fh);
 fibonacci_heap_element_t *fibonacciHeapMin(fibonacci_heap_t const *fh);
-fibonacci_heap_element_t *fibonacciHeapNewElement(int key);
+fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int vertex);
 void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node);
 void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e);
