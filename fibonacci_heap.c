@@ -165,10 +165,15 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
     A[i] = NULL;
   }
 
-  fibonacci_heap_element_t *root = fh->root;  // Keep original element in memory
-  fibonacci_heap_element_t *w = root;
+  fibonacci_heap_element_t *root_left = fh->root->left;  // Keep original element in memory
+  fibonacci_heap_element_t *w = fh->root;
+
+  int left_seen = 0;
   // Iterate over all the roots
-  do {
+  while (1) {
+    if (w == root_left) {
+      left_seen = 1;
+    }
     fibonacci_heap_element_t *x = w;
     fibonacci_heap_element_t *next = w->right;
     int d = x->degree;
@@ -185,7 +190,10 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
     }
     A[d] = x;
     w = next;
-  } while (w != root);
+    if (left_seen == 1) {
+      break;
+    }
+  }
 
   fh->min = NULL;
   for (int i = 0; i < max_deg; i++) {
