@@ -168,9 +168,9 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   fibonacci_heap_element_t *root = fh->root;  // Keep original element in memory
   fibonacci_heap_element_t *w = root;
   // Iterate over all the roots
-  while (w != root->left) {
-    printf("%f\n", w->key);
+  do {
     fibonacci_heap_element_t *x = w;
+    fibonacci_heap_element_t *next = w->right;
     int d = x->degree;
     while (A[d] != NULL) {
       fibonacci_heap_element_t *y = A[d];
@@ -184,8 +184,8 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
       d++;
     }
     A[d] = x;
-    w = w->right;
-  }
+    w = next;
+  } while (w != root);
 
   fh->min = NULL;
   for (int i = 0; i < max_deg; i++) {
@@ -203,10 +203,12 @@ fibonacci_heap_element_t *fibonacciHeapExtractMin(fibonacci_heap_t *fh) {
   if (z != NULL) {
     if (z->child != NULL) {  // Put all the childs of z at the root level
       fibonacci_heap_element_t *current = z->child;
+      fibonacci_heap_element_t *tmp;
 
       do {
+        tmp = current->right;
         fibonacciHeapAddRoot(fh, current, 0);
-        current = current->right;
+        current = tmp;
       } while (current != z->child);
     }
 

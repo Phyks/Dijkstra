@@ -8,7 +8,7 @@
 #include "states.h"
 #include "utils.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 void dijkstra(graph_t* G, int source, int* prev, double* dist){
   fibonacci_heap_t* fh = fibonacciHeapCreate();
