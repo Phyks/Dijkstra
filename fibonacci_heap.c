@@ -23,31 +23,38 @@ fibonacci_heap_t *fibonacciHeapCreate() {
  * Free a Fibonacci heap.
  * TODO
  */
-void fibonacciHeapFree(fibonacci_heap_t *fh) {
-  fibonacci_heap_element_t *level = fh->root;
-  fibonacci_heap_element_t *parallel, *tmp;
-  while (level->child != NULL) {  // Go all the way down
-    level = level->child;
+static void fibonacciHeapFreeSubTree(fibonacci_heap_element_t *root) {
+  if (root == NULL) {
+    return;
   }
-  while (level != NULL) {  // Go back to top, freeing the structure
-    if (level->left != level) {  // If not a single child
-      parallel = level;
-      while (parallel != NULL) {  // Go to the left on each level
-        tmp = parallel->left;
-        free(parallel);
-        parallel = tmp;
+
+  if (root->right == root) {
+    fibonacciHeapFreeSubTree(root->child);
+  }
+  else {
+    fibonacci_heap_element_t *current = root;
+    fibonacci_heap_element_t *tmp;
+
+    if (current->right == current) {
+      fibonacciHeapFreeSubTree(current);
+    }
+    else {
+      while (current->left != NULL) {
+        printf("ok\n");
+        current = current->left;
       }
-      parallel = level->right;
-      while (parallel != NULL) {  // Then, to the right
-        tmp = parallel->right;
-        free(parallel);
-        parallel = tmp;
+      while (current != NULL) {
+        tmp = current->right;
+        fibonacciHeapFreeSubTree(current);
+
+        current = tmp;
       }
     }
-    tmp = level->parent;
-    free(level);
-    level = tmp;
   }
+  free(root);
+}
+void fibonacciHeapFree(fibonacci_heap_t *fh) {
+  fibonacciHeapFreeSubTree(fh->root);
   free(fh);
 }
 
