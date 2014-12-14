@@ -158,28 +158,6 @@ static void fibonacciHeapLinkHeaps(fibonacci_heap_t *fh, fibonacci_heap_element_
   fibonacciHeapDeleteRoot(fh, y, 0);
   fibonacciHeapAppend(x, y);
 }
-static void fibonacciHeapConsolidateWhile(fibonacci_heap_t *fh, fibonacci_heap_element_t **A, fibonacci_heap_element_t *w) {
-  fibonacci_heap_element_t *x = w;
-  int d = x->degree;
-  while (A[d] != NULL) {
-    fibonacci_heap_element_t *y = A[d];
-    if (x->key > y->key) {
-      fibonacci_heap_element_t *tmp = y;
-      y = x;
-      x = tmp;
-    }
-    fibonacciHeapLinkHeaps(fh, y, x);
-    A[d] = NULL;
-    d++;
-  }
-  A[d] = x;
-  if (w->right != w) {
-    w = w->right;
-  }
-  else {
-    w = NULL;
-  }
-}
 static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   const int max_deg = (int) floor(log(fh->nb_nodes) / log((1+sqrt(5)) / 2)) + 1;
   fibonacci_heap_element_t **A = (fibonacci_heap_element_t **) safe_malloc(sizeof(fibonacci_heap_element_t *) * max_deg);
@@ -187,12 +165,28 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
     A[i] = NULL;
   }
 
-  fibonacci_heap_element_t *w = fh->root->right;
+  fibonacci_heap_element_t *root = fh->root;  // Keep original element in memory
+  fibonacci_heap_element_t *w = root;
   // Iterate over all the roots
-  fibonacciHeapConsolidateWhile(fh, A, w);
-  while (w != fh->root) {
-    fibonacciHeapConsolidateWhile(fh, A, w);
+  while (w != root->left) {
+    printf("%f\n", w->key);
+    fibonacci_heap_element_t *x = w;
+    int d = x->degree;
+    while (A[d] != NULL) {
+      fibonacci_heap_element_t *y = A[d];
+      if (x->key > y->key) {
+        fibonacci_heap_element_t *tmp = y;
+        y = x;
+        x = tmp;
+      }
+      fibonacciHeapLinkHeaps(fh, y, x);
+      A[d] = NULL;
+      d++;
+    }
+    A[d] = x;
+    w = w->right;
   }
+
   fh->min = NULL;
   for (int i = 0; i < max_deg; i++) {
     if (A[i] != NULL) {
@@ -208,14 +202,12 @@ fibonacci_heap_element_t *fibonacciHeapExtractMin(fibonacci_heap_t *fh) {
   fibonacci_heap_element_t *z = fh->min;
   if (z != NULL) {
     if (z->child != NULL) {  // Put all the childs of z at the root level
-      fibonacci_heap_element_t *x = z->child;
-      fibonacci_heap_element_t *current = x->right;
-      fibonacciHeapAddRoot(fh, x, 0);
+      fibonacci_heap_element_t *current = z->child;
 
-      while (current != x) {
+      do {
         fibonacciHeapAddRoot(fh, current, 0);
         current = current->right;
-      }
+      } while (current != z->child);
     }
 
     fibonacciHeapDeleteRoot(fh, z, 1);
