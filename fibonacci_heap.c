@@ -28,29 +28,17 @@ static void fibonacciHeapFreeSubTree(fibonacci_heap_element_t *root) {
     return;
   }
 
-  if (root->right == root) {
-    fibonacciHeapFreeSubTree(root->child);
-  }
-  else {
-    fibonacci_heap_element_t *current = root;
+  if (root->right != root) {  // Root is not an only child
+    fibonacci_heap_element_t *current = root->right;
     fibonacci_heap_element_t *tmp;
 
-    if (current->right == current) {
+    while (current != root) {
+      tmp = current->right;
       fibonacciHeapFreeSubTree(current);
-    }
-    else {
-      // TODO: To be more easily readable, we first go to the left, and then come backward. However, we are performing to much operations and we could only explore on the left and on the right.
-      while (current->left != NULL) {
-        current = current->left;
-      }
-      while (current != NULL) {
-        tmp = current->right;
-        fibonacciHeapFreeSubTree(current);
-
-        current = tmp;
-      }
+      current = tmp;
     }
   }
+  fibonacciHeapFreeSubTree(root->child);
   free(root);
 }
 void fibonacciHeapFree(fibonacci_heap_t *fh) {
@@ -84,8 +72,8 @@ fibonacci_heap_element_t *fibonacciHeapNewElement(float key, int from, int to) {
   e->degree = 0;
   e->child = NULL;
   e->parent = NULL;
-  e->left = NULL;
-  e->right = NULL;
+  e->left = e;
+  e->right = e;
   /* Decorations */
   e->from = from;
   e->to = to;
@@ -102,16 +90,10 @@ void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node, 
 
   fh->root = node;
 
-  if (root != NULL) {  // Non-empty heap, updat the lists
-    if (root->right == root) {
-      root->left = NULL;
-      root->right = NULL;
-    }
+  if (root != NULL) {  // Non-empty heap, update the lists
     node->right = root;
     node->left = root->left;
-    if (root->left != NULL) {
-      root->left->right = node;
-    }
+    root->left->right = node;
     root->left = node;
   }
   else {
@@ -133,22 +115,9 @@ void fibonacciHeapDeleteRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *nod
     fh->root = NULL;
   }
   else {
-    if (node->right != NULL) {
-      node->right->left = node->left;
-      if (node->right->right == NULL && node->right->left == NULL) {
-        node->right->right = node->right;
-        node->right->left = node->right;
-      }
-      fh->root = node->right;
-    }
-    else {  // node->left is not NULL in this case
-      node->left->right = node->right;
-      if (node->left->right == NULL && node->left->left == NULL) {
-        node->left->right = node->left;
-        node->left->left = node->left;
-      }
-      fh->root = node->left;
-    }
+    node->right->left = node->left;
+    node->left->right = node->right;
+    fh->root = node->right;
   }
   fh->nb_nodes -= count;
 }
@@ -174,15 +143,9 @@ static void fibonacciHeapAppend(fibonacci_heap_element_t *x, fibonacci_heap_elem
   y->parent = x;
   x->child = y;
   if (child != NULL) {  // Update lists
-    if (child->right == child) {
-      child->left = NULL;
-      child->right = NULL;
-    }
     y->right = child;
     y->left = child->left;
-    if (child->left != NULL) {
-      child->left->right = y;
-    }
+    child->left->right = y;
     child->left = y;
   }
   else {
@@ -195,6 +158,28 @@ static void fibonacciHeapLinkHeaps(fibonacci_heap_t *fh, fibonacci_heap_element_
   fibonacciHeapDeleteRoot(fh, y, 0);
   fibonacciHeapAppend(x, y);
 }
+static void fibonacciHeapConsolidateWhile(fibonacci_heap_t *fh, fibonacci_heap_element_t **A, fibonacci_heap_element_t *w) {
+  fibonacci_heap_element_t *x = w;
+  int d = x->degree;
+  while (A[d] != NULL) {
+    fibonacci_heap_element_t *y = A[d];
+    if (x->key > y->key) {
+      fibonacci_heap_element_t *tmp = y;
+      y = x;
+      x = tmp;
+    }
+    fibonacciHeapLinkHeaps(fh, y, x);
+    A[d] = NULL;
+    d++;
+  }
+  A[d] = x;
+  if (w->right != w) {
+    w = w->right;
+  }
+  else {
+    w = NULL;
+  }
+}
 static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   const int max_deg = (int) floor(log(fh->nb_nodes) / log((1+sqrt(5)) / 2)) + 1;
   fibonacci_heap_element_t **A = (fibonacci_heap_element_t **) safe_malloc(sizeof(fibonacci_heap_element_t *) * max_deg);
@@ -202,38 +187,11 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
     A[i] = NULL;
   }
 
-  int d;
-  fibonacci_heap_element_t *w;
-  w = fh->root;
-  // Go all the way to the left
-  // TODO: To be more easily readable, we first go to the left, and then come backward. However, we are performing to much operations and we could only explore on the left and on the right.
-  if (w->left != w) {
-    while (w->left != NULL) {
-      w = w->left;
-    }
-  }
+  fibonacci_heap_element_t *w = fh->root->right;
   // Iterate over all the roots
-  while (w != NULL) {
-    fibonacci_heap_element_t *x = w;
-    d = x->degree;
-    while (A[d] != NULL) {
-      fibonacci_heap_element_t *y = A[d];
-      if (x->key > y->key) {
-        fibonacci_heap_element_t *tmp = y;
-        y = x;
-        x = tmp;
-      }
-      fibonacciHeapLinkHeaps(fh, y, x);
-      A[d] = NULL;
-      d++;
-    }
-    A[d] = x;
-    if (w->right != w) {
-      w = w->right;
-    }
-    else {
-      w = NULL;
-    }
+  fibonacciHeapConsolidateWhile(fh, A, w);
+  while (w != fh->root) {
+    fibonacciHeapConsolidateWhile(fh, A, w);
   }
   fh->min = NULL;
   for (int i = 0; i < max_deg; i++) {
@@ -251,20 +209,12 @@ fibonacci_heap_element_t *fibonacciHeapExtractMin(fibonacci_heap_t *fh) {
   if (z != NULL) {
     if (z->child != NULL) {  // Put all the childs of z at the root level
       fibonacci_heap_element_t *x = z->child;
-      if (x->left != x) {
-        fibonacci_heap_element_t *tmp = x;
-        while (tmp != NULL) {  // First, go left
-          fibonacciHeapAddRoot(fh, tmp, 0);
-          tmp = tmp->left;
-        }
-        tmp = x->right;
-        while (tmp != NULL) {  // Then, go right
-          fibonacciHeapAddRoot(fh, tmp, 0);
-          tmp = tmp->right;
-        }
-      }
-      else {
-        fibonacciHeapAddRoot(fh, x, 0);
+      fibonacci_heap_element_t *current = x->right;
+      fibonacciHeapAddRoot(fh, x, 0);
+
+      while (current != x) {
+        fibonacciHeapAddRoot(fh, current, 0);
+        current = current->right;
       }
     }
 
