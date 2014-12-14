@@ -163,7 +163,6 @@ void fibonacciHeapInsert(fibonacci_heap_t *fh, fibonacci_heap_element_t *e) {
   if (fh->min == NULL || e->key < fh->min->key) {
     fh->min = e;
   }
-  ++fh->nb_nodes;
 }
 
 
