@@ -100,7 +100,7 @@ void fibonacciHeapAddRoot(fibonacci_heap_t *fh, fibonacci_heap_element_t *node) 
 
   fh->root = node;
 
-  if (fh->root != NULL) {  // Non-empty heap, updat the lists
+  if (root != NULL) {  // Non-empty heap, updat the lists
     if (root->right == root) {
       root->left = NULL;
       root->right = NULL;
