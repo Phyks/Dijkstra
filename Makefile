@@ -2,17 +2,26 @@ CC=gcc -g -Wall -Wextra
 CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs` -lm -fPIC
 SHELL=/bin/zsh
 
-SOURCES=graph.c main.c dijkstra.c queue.c states.c utils.c fibonacci_heap.c dijkstra_opt.c
+SOURCES=graph.c main.c states.c utils.c
 OBJECTS=$(SOURCES:%.c=%.o)
-EXECUTABLE=dijkstra
+EXECUTABLE_QUEUE=dijkstra
+EXECUTABLE_FIB=dijkstra_opt
+
+SOURCES_QUEUE=$(SOURCES) queue.c dijkstra.c
+SOURCES_FIB=$(SOURCES) fibonacci_heap.c dijkstra_opt.c
+
+OBJECTS_QUEUE=$(SOURCES_QUEUE:%.c=%.o)
+OBJECTS_FIB=$(SOURCES_FIB:%.c=%.o)
 
 PYFLAGS=-pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python3.4m
 PYDEPS=graph.c utils.c states.c
-PYQUEUE=$(PYDEPS) queue.c dijkstra.c
-PYFIB=$(PYDEPS) fibonacci_heap.c dijkstra_opt.c
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+
+$(EXECUTABLE_QUEUE): $(OBJECTS_QUEUE)
+	$(CC) $(CFLAGS) $(OBJECTS_QUEUE) -o $@
+
+$(EXECUTABLE_FIB): $(OBJECTS_FIB)
+	$(CC) $(CFLAGS) $(OBJECTS_FIB) -o $@
 
 .o:
 	$(CC) $(INCLUDES) -c $< $(CFLAGS) -o $@
@@ -48,8 +57,8 @@ pyjkstra.o: pyjkstra.pyx
 	cython $^
 	gcc  $(PYFLAGS) -c pyjkstra.c
 
-pyqueue: $(PYQUEUE:%.c=%.o) pyjkstra.o
+pyqueue: $(OBJECTS_QUEUE:%.c=%.o) pyjkstra.o
 	gcc -shared $(PYFLAGS) -o pyjkstra.so $^
 
-pyfib: $(PYFIB:%.c=%.o) pyjkstra.o
+pyfib: $(OBJECTS_FIB:%.c=%.o) pyjkstra.o
 	gcc -shared $(PYFLAGS) -o pyjkstra.so $^
