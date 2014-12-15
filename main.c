@@ -50,7 +50,7 @@ graph_t *parse_input_file (FILE* fp) {
   int edge[2];
   double weight;
 
-  graph_t *graph;
+  graph_t *graph = NULL;
 
   if (fp != NULL) {
     while (fgets(line, 1024, fp) != NULL) {
