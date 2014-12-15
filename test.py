@@ -24,7 +24,7 @@ for k in range(100):
     with open("tests/random/"+str(ident), "w") as fh:
         fh.write(out)
     start = time.time()
-    out = subprocess.check_output(["./dijkstra_opt", "tests/random/"+str(ident)])
+    out = subprocess.check_output(["./dijkstra_fib", "tests/random/"+str(ident)])
     duration = time.time() - start
     print(str(duration)+"s")
     with open("tests_outputs/random/"+str(ident), "wb") as fh:

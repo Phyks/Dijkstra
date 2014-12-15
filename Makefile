@@ -4,8 +4,8 @@ SHELL=/bin/zsh
 
 SOURCES=graph.c main.c states.c utils.c
 OBJECTS=$(SOURCES:%.c=%.o)
-EXECUTABLE_QUEUE=dijkstra
-EXECUTABLE_FIB=dijkstra_opt
+EXECUTABLE_QUEUE=dijkstra_queue
+EXECUTABLE_FIB=dijkstra_fib
 
 SOURCES_QUEUE=$(SOURCES) queue.c dijkstra.c
 SOURCES_FIB=$(SOURCES) fibonacci_heap.c dijkstra_opt.c

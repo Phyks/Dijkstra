@@ -172,7 +172,7 @@ class osmMap:
 if __name__ == "__main__":
     if not (len(sys.argv) >= 3):
         print("Opens an OSM data file, converts it and sends it to the" +
-              "./dijkstra program.")
+              "dijkstra program.")
         print("Usage : ")
         print("\t{} osm_file start_address [dump file]".format(sys.argv[0]))
         sys.exit()
