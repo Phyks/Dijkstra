@@ -244,33 +244,35 @@ if __name__ == "__main__":
         print("Station:\t{} ({})".format(station['all']['tags']['name'], station['id']))
     # Calculate all paths
 
-    print(tt(), "Finding ways…")
-    start_intern = osm.intern_id(start)
-    prev, dist = graph.dijkstra(start_intern)
+    print(tt(), "Printing graph…")
+    print(osm.printGraph())
+    # print(tt(), "Finding ways…")
+    # start_intern = osm.intern_id(start)
+    # prev, dist = graph.dijkstra(start_intern)
 
-    # Printing out
-    print(tt(), "Printing ways ")
-    for end in reachables:
-        node = osm.intern_id(end['id'])
+    # # Printing out
+    # print(tt(), "Printing ways ")
+    # for end in reachables:
+    #     node = osm.intern_id(end['id'])
 
-        print("Chemin vers {}.".format(end['all']['tags']['name']))
-        if node is None or prev[node] is None:
-            print("Pas de chemin trouvé.\n")
-            continue
+    #     print("Chemin vers {}.".format(end['all']['tags']['name']))
+    #     if node is None or prev[node] is None:
+    #         print("Pas de chemin trouvé.\n")
+    #         continue
 
-        while node != start_intern:
-            c = osm.real_id(node)
-            p = osm.real_id(prev[node])
-            if p == start:
-                road = osm.find_road(c, c)
-            elif c == end['id']:
-                road = osm.find_road(p, p)
-            else:
-                road = osm.find_road(c, p)
+    #     while node != start_intern:
+    #         c = osm.real_id(node)
+    #         p = osm.real_id(prev[node])
+    #         if p == start:
+    #             road = osm.find_road(c, c)
+    #         elif c == end['id']:
+    #             road = osm.find_road(p, p)
+    #         else:
+    #             road = osm.find_road(c, p)
 
-            print("{}\t<-\t{}\t({}m)\t[{}]".format(c, p,
-                                                   round(dist[node], 1),
-                                                   road))
-            if node != start_intern:
-                node = prev[node]
-        print()
+    #         print("{}\t<-\t{}\t({}m)\t[{}]".format(c, p,
+    #                                                round(dist[node], 1),
+    #                                                road))
+    #         if node != start_intern:
+    #             node = prev[node]
+    #     print()

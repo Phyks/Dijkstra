@@ -8,7 +8,7 @@
 #include "states.h"
 #include "utils.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 void dijkstra(graph_t* G, int source, int* prev, double* dist){
   fibonacci_heap_t* fh = fibonacciHeapCreate();
@@ -40,11 +40,10 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
   for (int i = 0; i < n; i++) {
     d = dist[source] + edge->weight;
     v = edge->vertex;
-    if(DEBUG) {
-      printf("Dijkstra: insertion de %d-%d (%f).\n", source, v, d);
-    }
     fibonacciHeapInsert(fh, fibonacciHeapNewElement(d, source, v));
-
+    if(DEBUG) {
+      printf("Dijkstra: insertion de %d-%d (%f).\t%d\n", source, v, d, fh->nb_nodes);
+    }
     /* next edge */
     edge = edge->next;
   }
@@ -61,7 +60,7 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
     d = tmp->key;
     free(tmp);
     if(DEBUG) {
-      printf("\tExtraction de %d-%d (%f)\n", u, v, d);
+      printf("\tExtraction de %d-%d (%f)\t%d\n", u, v, d, fh->nb_nodes);
     }
     if (!isState(states, v, VISITED)) {
       dist[v] = d;
@@ -78,11 +77,10 @@ void dijkstra(graph_t* G, int source, int* prev, double* dist){
         }
 
         d = dist[v] + edge->weight;
-        if(DEBUG) {
-          printf("\t\t\t: insertion de %d-%d (%f).\n", v, w, d);
-        }
         fibonacciHeapInsert(fh, fibonacciHeapNewElement(d, v, w));
-
+        if(DEBUG) {
+          printf("\t\t\t: insertion de %d-%d (%f).\t%d\n", v, w, d, fh->nb_nodes);
+        }
         /* next edge */
         edge = edge->next;
       }

@@ -158,10 +158,10 @@ int main(int argc, char **argv) {
 
   graph_t *graph = parse_input_file(in);
 
-  if (!isConnected(graph)) {
-    fprintf(stderr, "Input graph is not connected.\n");
-    exit(EXIT_FAILURE);
-  }
+  /* if (!isConnected(graph)) { */
+  /*   fprintf(stderr, "Input graph is not connected.\n"); */
+  /*   exit(EXIT_FAILURE); */
+  /* } */
 
   int start = 0;
   double *dist = (double*) safe_malloc(sizeof(double)*graph->nb_vertices);
