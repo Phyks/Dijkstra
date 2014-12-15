@@ -1,4 +1,4 @@
-CC=gcc -g -Wall -Wextra
+CC=gcc -Wall -Wextra -O2
 CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs` -lm -fPIC
 SHELL=/bin/zsh
 

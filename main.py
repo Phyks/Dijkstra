@@ -44,7 +44,7 @@ class osmMap:
         try:
             self.tree = et.parse(osm_file)
         except:
-            print("Impossible to open {}.".format(osm_file))
+            # print("Impossible to open {}.".format(osm_file))
             sys.exit()
         self.updateRoads()
 
@@ -244,11 +244,17 @@ if __name__ == "__main__":
         print("Station:\t{} ({})".format(station['all']['tags']['name'], station['id']))
     # Calculate all paths
 
-    print(tt(), "Printing graph…")
-    print(osm.printGraph())
-    # print(tt(), "Finding ways…")
-    # start_intern = osm.intern_id(start)
-    # prev, dist = graph.dijkstra(start_intern)
+    # print(tt(), "Printing graph…")
+    # print(osm.printGraph())
+    
+    print(tt(), "Finding ways…")
+    start_intern = osm.intern_id(start)
+    if start_intern is None:
+        print("Startpoint not in map.")
+        sys.exit(1)
+    t1 = time.perf_counter()
+    prev, dist = graph.dijkstra(start_intern)
+    t2 = time.perf_counter()
 
     # # Printing out
     # print(tt(), "Printing ways ")
@@ -275,4 +281,12 @@ if __name__ == "__main__":
     #                                                road))
     #         if node != start_intern:
     #             node = prev[node]
-    #     print()
+
+    print("nodes", len(osm.nodes))
+    nedges = [0]
+
+    def inc(u, v, d):
+        nedges[0] += 1
+    osm.parse(lambda x: None, inc)
+    print("edges", nedges[0])
+    print("time", t2-t1)
