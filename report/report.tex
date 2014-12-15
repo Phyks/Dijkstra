@@ -4,6 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{minted}
+\usepackage{graphics}
 \title{Recherche de chemin --- Algorithme de Dijkstra avec tas de Fibonacci et applications}
 \author{Corentin Cadiou \and Lucas Verney}
 
@@ -59,17 +60,15 @@ distance supérieure que celle calculée. On a donc conservé l'hypothèse
 par itération.
 Comme celle-ci est vraie pour la première itération (la distance la
 plus courte de la source à ses voisin est la distance entre ceux-ci),
-elle est vraie pour toutes les itérations. On a donc trouvé la plus
+elle est vraie pour toutes les itérations. On ax donc trouvé la plus
 courte distance entre la source et chacun des nœuds du graphe.
 
 On peut implémenter l'algorithme avec une queue supportant les trois
 opérations suivantes :
 \begin{enumerate}
-  \item ajout d'une clé (la distance du nœud à la source), avec
-    décoration (le nœud) 
-    \mint{python}|add(node, distance)|
-  \item mise à jour d'une clé pour un nœud donné
-    \mint{python}|add(node, new_distance)|
+  \item ajout d'une clé (la distance du nœud du bout à la source), avec
+    décoration (les deux nœuds formant l'arête) 
+    \mint{python}|insert(from, to, distance)|
   \item récupération du minimum et suppression de la file
     \mint{python}|extract_min()|
 \end{enumerate}
@@ -80,19 +79,24 @@ def Dijkstra(Graph, source):            # Source is the startpoint of the algori
        if v != source:
            dist[v]     = Infinity       # Unknown distance from source to v
            previous[v] = None           # Predecessor of v
-       Q.add(v, dist[v])
+
+   source.mark = scanned
+
+   # Initialise the queue with the neighbours of the source
+   for u in source.neighbours:
+       d = dist[source] + length(source, u)
+       Q.insert(u, v, d)
 
    while Q is not empty:                # The main loop
-       u      = Q.extract_min()         # Remove and return best vertex
-       u.mark = scanned
-       for v in u.neighbours:
-           if v.mark is not scanned:
-               alt = dist[u] + length(u, v) 
-               if alt < dist[v]
-                   dist[v]     = alt
-                   previous[v] = u
-                   Q.update(v, alt)
+       u, v, d = Q.extract_min()        # Remove and return best vertex
+       if v.mark is not scanned:
+           dist[v] = d
+           prev[v] = u
+           v.mark = scanned
 
+           for w in v.neighbours: 
+               d = dist[v] + length(v, w) 
+               Q.insert(v, w, d)
    return previous
 \end{minted}
 \section{Tas de Fibonacci}\label{sec:tas-de-fibonacci}
@@ -151,6 +155,41 @@ comme distance :
   a & = \left( \frac{\sin(\Delta_\mathrm{lat})}{2} \right)^2 +
       \cos(\mathrm{lat_1})\cos(\mathrm{lat_2}) \left( \frac{\sin(\Delta_\mathrm{lon})}{2} \right)^2
 \end{align*}
+
+\section{Vérification de la complexité de l'algorithme}
+Nous avons vérifié que l'implémentation de l'algorithme de Dijkstra
+utilisant une file de priorité naïve s'effectue en temps $O(|U| + |V|^2)$ tandis
+que l'implémentation avec les tas de Fibonacci s'effectue en temps
+$O(|E| + |V|\log |V|)$. Pour cela, nous avons généré des graphes
+d'Erdös-Rényii de taille entre 10 et 10000 arêtes avec $p\sim
+0.1$. Les courbes du temps de travail de l'algorithme ont ensuite été
+tracées. Les résultats montrent qu'effectivement, la
+non-implémentation des tas de Fibonacci mène à une complexité en
+$O(|U| + |V|^2)$ comme montré sur la Figure~\ref{fig:reg_queue}. Pour
+les tas de Fibonacci, on obtient bien un temps amorti en $O(|E| +
+|V|\log |V|)$ comme on peut l'observer sur la Figure~\ref{fig:reg_fib}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics{reg_queue.pdf}
+  \end{center}
+  \caption{\label{fig:reg_queue}Tracé de la courbe du temps en fonction de
+    $|E| + |V|\log |V|$ en utilisant un tas simple.
+    On constate que tous les points si situent en
+    dessous de la droite, ce qui correspond bien à la définition d'un
+    temps en $O(|E| + |V|^2)$.}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics{reg.pdf}
+  \end{center}
+  \caption{\label{fig:reg_fib}Tracé de la courbe du temps en fonction de
+    $|E| + |V|\log |V|$ en utilisant les tas de Fibonacci.
+    On constate que tous les points si situent en
+    dessous de la droite, ce qui correspond bien à la définition d'un
+    temps en $O(|E| + |V|\log |V|)$.}
+\end{figure}
+
 \appendix
 \section{Code du wrapper}\label{sec:code-du-wrapper}
 Le wrapper utilise deux classes, l'une en Cython (lignes 7 à 72) qui
