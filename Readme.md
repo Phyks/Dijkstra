@@ -1,23 +1,32 @@
-# Algorithm de Dijkstra #
+# Algorithme de Dijkstra #
 Nous avons implémenté l'algorithme de Dijkstra utilisant les tas de
-Fibonacci. Toutes les options de compilation sont accessibles via la
-commande `make` avec les bonnes cibles. Les binaires suivants peuvent
-être compilés:
+Fibonacci.
 
-1. `dijkstra_fib` et `dijkstra_queue` /via/ les commandes `make
-   dijkstra_fib` et `make dijkstra_queue`. Le binaire généré est un
-   programme C capable de parser un fichier de graphe. Il n'échoue pas
-   sur des graphes non connexes. Sa sortie donne pour chaque nœud la
-   distance au point de départ (codé en dur à 0) ainsi que son
-   prédecesseur. 
-2. `pyfib` et `pyqueue` génèrent un wrapper Python3 de l'algorithme. Il
-   est alors possible d'utiliser le script `path_finder.py` qui prend en
-   entrée une carte (des cartes sont disponibles dans le dossier
-   `maps`, se méfier des grosses cartes sur une petite configuration)
-   ainsi qu'une adresse, et renvoie la liste des transports en commun
-   les plus proches. Par exemple : `python3 path_finder.py
-   maps/5eme_grand.osm "45 rue d'Ulm,Paris"`
-   NB : le premier appel est susceptible d'être longue, le script
-   allant récupérer des listes de station sur un serveur assez
-   lent. Pour éviter d'avoir un second appel aussi lent, renseigner
-   exactement la même adresse.
+## Compilation des sources ##
+Il faut utiliser l'outils `make` pour compiler toutes les sources. Les
+cibles disponibles sont :
+
+1. `dijkstra_fib`, un utilitaire C qui lit un graphe, fait tourner
+l'algorithe à partir du point 0 dessus et renvoie le résultat en
+utilisant les tas de Fibonacci ;
+2. `dijkstra_queue`, un utilitaire C qui lit un graphe, fait tourner
+l'algorithe à partir du point 0 dessus et renvoie le résultat en
+utilisant une queue naïve ;
+3. `pyfib` qui génère un wrapper Python3 pour l'algorithme avec les
+   tas ;
+4. `pyqueue` qui génère un wrapper Python3 pour l'algorithme avec les
+queues ;
+5. `test_fib`, `test_queue` teste toutes les entrées du dossier tests/ et compare à
+la sortie attendue dans le dossier tests_outputs/ ;
+
+## Utilisation des binaires ##
+Les binaires `dijkstra_*` prennent en entrée un graphe (depuis un
+fichier ou depuis `stdin`). Ils donnent en sortie les distances et les
+prédecesseurs de tous les nœuds.
+
+## Utilisation des scripts python ##
+Un script python appelé `path_find.py` qui prend en entrée une carte
+OSM ainsi qu'une adresse de départ (par exemple : "45 rue d'Ulm,
+Paris"). Il est de plus possible de spécifier un `dump_file` dans
+lequel sont stockés quelques méta-données sur les transports publiques
+les plus proches de l'adresse.

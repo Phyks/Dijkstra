@@ -256,37 +256,37 @@ if __name__ == "__main__":
     prev, dist = graph.dijkstra(start_intern)
     t2 = time.perf_counter()
 
-    # # Printing out
-    # print(tt(), "Printing ways ")
-    # for end in reachables:
-    #     node = osm.intern_id(end['id'])
+    # Printing out
+    print(tt(), "Printing ways ")
+    for end in reachables:
+        node = osm.intern_id(end['id'])
 
-    #     print("Chemin vers {}.".format(end['all']['tags']['name']))
-    #     if node is None or prev[node] is None:
-    #         print("Pas de chemin trouvé.\n")
-    #         continue
+        print("Chemin vers {} :".format(end['all']['tags']['name']))
+        if node is None or prev[node] is None:
+            print("Pas de chemin trouvé.\n")
+            continue
 
-    #     while node != start_intern:
-    #         c = osm.real_id(node)
-    #         p = osm.real_id(prev[node])
-    #         if p == start:
-    #             road = osm.find_road(c, c)
-    #         elif c == end['id']:
-    #             road = osm.find_road(p, p)
-    #         else:
-    #             road = osm.find_road(c, p)
+        while node != start_intern:
+            c = osm.real_id(node)
+            p = osm.real_id(prev[node])
+            if p == start:
+                road = osm.find_road(c, c)
+            elif c == end['id']:
+                road = osm.find_road(p, p)
+            else:
+                road = osm.find_road(c, p)
 
-    #         print("{}\t<-\t{}\t({}m)\t[{}]".format(c, p,
-    #                                                round(dist[node], 1),
-    #                                                road))
-    #         if node != start_intern:
-    #             node = prev[node]
+            print("{}\t<-\t{}\t({}m)\t[{}]".format(c, p,
+                                                   round(dist[node], 1),
+                                                   road))
+            if node != start_intern:
+                node = prev[node]
 
-    print("nodes", len(osm.nodes))
-    nedges = [0]
+    # print("nodes", len(osm.nodes))
+    # nedges = [0]
 
-    def inc(u, v, d):
-        nedges[0] += 1
-    osm.parse(lambda x: None, inc)
-    print("edges", nedges[0])
-    print("time", t2-t1)
+    # def inc(u, v, d):
+    #     nedges[0] += 1
+    # osm.parse(lambda x: None, inc)
+    # print("edges", nedges[0])
+    # print("time", t2-t1)
