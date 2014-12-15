@@ -23,7 +23,7 @@ créé pour pouvoir interagir facilement avec l'algorithme, comme
 détaille dans la Section~\ref{sec:expos-des-fonct}. Enfin, un script
 Python qui lit une carte OpenStreetMap, le convertit en un format
 d'entrée correct pour notre implémentation et effectue des recherches
-dedans a été écrit. 
+dedans a été écrit.
 
 \section{Algorithme de Dijkstra}\label{sec:algor-de-dijkstra}
 L'algorithme étudié est l'algorithme de Dijkstra. Cet algorithme a
@@ -70,7 +70,7 @@ On peut implémenter l'algorithme avec une queue supportant les trois
 opérations suivantes :
 \begin{enumerate}
   \item ajout d'une clé (la distance du nœud du bout à la source), avec
-    décoration (les deux nœuds formant l'arête) 
+    décoration (les deux nœuds formant l'arête)
     \mint{python}|insert(from, to, distance)|
   \item récupération du minimum et suppression de la file
     \mint{python}|extract_min()|
@@ -97,8 +97,8 @@ def Dijkstra(Graph, source):            # Source is the startpoint of the algori
            prev[v] = u
            v.mark = scanned
 
-           for w in v.neighbours: 
-               d = dist[v] + length(v, w) 
+           for w in v.neighbours:
+               d = dist[v] + length(v, w)
                Q.insert(v, w, d)
    return previous
 \end{minted}
@@ -178,8 +178,7 @@ Nous avons vérifié que l'implémentation de l'algorithme de Dijkstra
 utilisant une file de priorité naïve s'effectue en temps $O(|U| + |V|^2)$ tandis
 que l'implémentation avec les tas de Fibonacci s'effectue en temps
 $O(|E| + |V|\log |V|)$. Pour cela, nous avons généré des graphes
-d'Erdös-Rényii de taille entre 10 et 10000 arêtes avec $p\sim
-0.1$. Les courbes du temps de travail de l'algorithme ont ensuite été
+d'Erdös-Rényii de taille entre 10 et 10000 sommets avec $p$ pris uniformément (aléatoirement, pour chaque génération) entre 0 et 1. Les courbes du temps de travail de l'algorithme ont ensuite été
 tracées. Les résultats montrent qu'effectivement, la
 non-implémentation des tas de Fibonacci mène à une complexité en
 $O(|U| + |V|^2)$ comme montré sur la Figure~\ref{fig:reg_queue}. Pour
@@ -192,7 +191,7 @@ les tas de Fibonacci, on obtient bien un temps amorti en $O(|E| +
   \end{center}
   \caption{\label{fig:reg_queue}Courbe du temps en fonction de
     $|E| + |V|^2$ en utilisant un tas simple.
-    On constate que tous les points si situent en
+    On constate que tous les points se situent en
     dessous de la droite, ce qui correspond bien à la définition d'un
     temps en $O(|E| + |V|^2)$.}
 \end{figure}
@@ -202,7 +201,7 @@ les tas de Fibonacci, on obtient bien un temps amorti en $O(|E| +
   \end{center}
   \caption{\label{fig:reg_fib}Courbe du temps en fonction de
     $|E| + |V|\log |V|$ en utilisant les tas de Fibonacci.
-    On constate que tous les points si situent en
+    On constate que tous les points se situent en
     dessous de la droite, ce qui correspond bien à la définition d'un
     temps en $O(|E| + |V|\log |V|)$.}
 \end{figure}
