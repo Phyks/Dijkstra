@@ -1,5 +1,5 @@
 CC=gcc -Wall -Wextra -O2
-CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs` -lm -fPIC
+CFLAGS=-std=c99 -Wall `xml2-config --cflags --libs` -fPIC
 SHELL=/bin/zsh
 
 SOURCES=graph.c main.c states.c utils.c
@@ -18,13 +18,13 @@ PYDEPS=graph.c utils.c states.c
 
 
 $(EXECUTABLE_QUEUE): $(OBJECTS_QUEUE)
-	$(CC) $(CFLAGS) $(OBJECTS_QUEUE) -o $@
+	$(CC) $(CFLAGS) $(OBJECTS_QUEUE) -lm -o $@
 
 $(EXECUTABLE_FIB): $(OBJECTS_FIB)
-	$(CC) $(CFLAGS) $(OBJECTS_FIB) -o $@
+	$(CC) $(CFLAGS) $(OBJECTS_FIB) -lm -o $@
 
 .o:
-	$(CC) $(INCLUDES) -c $< $(CFLAGS) -o $@
+	$(CC) $(INCLUDES) -c $< $(CFLAGS) -lm -o $@
 
 clean:
 	rm -rf $(EXECUTABLE)

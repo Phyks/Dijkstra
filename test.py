@@ -12,10 +12,10 @@ def h(x):
     return hashlib.sha224(str(x).encode('utf-8')).hexdigest()
 
 for k in range(100):
-    ident = h(time.time)
+    ident = h(time.time())
     print("Test "+str(ident))
-    n = random.randint(10, 1000)
-    p = random.uniform(0, 1)
+    n = random.randint(1000, 10000)
+    p = random.uniform(0, 0.5)
     G = nx.fast_gnp_random_graph(n, p, directed=True)
     out = str(n)+" "+str(len(G.edges()))+"\n"
     print(out.strip())
