@@ -198,7 +198,7 @@ static void fibonacciHeapConsolidate(fibonacci_heap_t *fh) {
   fh->min = NULL;
   for (int i = 0; i < max_deg; i++) {
     if (A[i] != NULL) {
-      fibonacciHeapAddRoot(fh, A[i], 0);
+      /* fibonacciHeapAddRoot(fh, A[i], 0); */
       if (fh->min == NULL || A[i]->key < fh->min->key) {
         fh->min = A[i];
       }
