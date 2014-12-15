@@ -4,11 +4,9 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{minted}
-<<<<<<< HEAD
 \usepackage{graphics}
-=======
 \usepackage{hyperref}
->>>>>>> 996ee4885561eb9765620d6c7df7da90b8fa7658
+
 \title{Recherche de chemin --- Algorithme de Dijkstra avec tas de Fibonacci et applications}
 \author{Corentin Cadiou \and Lucas Verney}
 
@@ -19,10 +17,13 @@ l'algorithme de Dijkstra de recherche de chemin en utilisant des tas de
 Fibonacci.
 
 Cette implémentation a été réalisée dans le langage C et est détaillée
-dans les Sections~\ref{sec:algor-de-dijkstra} et~\ref{sec:tas-de-fibonacci}. Un ``\emph{wrapper}''
-python3 a été créé pour pouvoir interagir facilement avec
-l'algorithme, comme détaille dans la Section~\ref{sec:expos-des-fonct}. Enfin, un script Python qui
-lit une carte OpenStreetMap, le convertit en un format d'entrée correct pour notre implémentation et effectue des recherches dedans a été écrit.
+dans les Sections~\ref{sec:algor-de-dijkstra}
+et~\ref{sec:tas-de-fibonacci}. Un ``\emph{wrapper}'' python3 a été
+créé pour pouvoir interagir facilement avec l'algorithme, comme
+détaille dans la Section~\ref{sec:expos-des-fonct}. Enfin, un script
+Python qui lit une carte OpenStreetMap, le convertit en un format
+d'entrée correct pour notre implémentation et effectue des recherches
+dedans a été écrit. 
 
 \section{Algorithme de Dijkstra}\label{sec:algor-de-dijkstra}
 L'algorithme étudié est l'algorithme de Dijkstra. Cet algorithme a
@@ -68,17 +69,9 @@ courte distance entre la source et chacun des nœuds du graphe.
 On peut implémenter l'algorithme avec une queue supportant les trois
 opérations suivantes :
 \begin{enumerate}
-<<<<<<< HEAD
   \item ajout d'une clé (la distance du nœud du bout à la source), avec
     décoration (les deux nœuds formant l'arête) 
     \mint{python}|insert(from, to, distance)|
-=======
-  \item ajout d'une clé (la distance du nœud à la source), avec
-    décoration (le nœud)
-    \mint{python}|add(node, distance)|
-  \item mise à jour d'une clé pour un nœud donné
-    \mint{python}|add(node, new_distance)|
->>>>>>> 996ee4885561eb9765620d6c7df7da90b8fa7658
   \item récupération du minimum et suppression de la file
     \mint{python}|extract_min()|
 \end{enumerate}
@@ -98,23 +91,11 @@ def Dijkstra(Graph, source):            # Source is the startpoint of the algori
        Q.insert(u, v, d)
 
    while Q is not empty:                # The main loop
-<<<<<<< HEAD
        u, v, d = Q.extract_min()        # Remove and return best vertex
        if v.mark is not scanned:
            dist[v] = d
            prev[v] = u
            v.mark = scanned
-=======
-       u      = Q.extract_min()         # Remove and return best vertex
-       u.mark = scanned
-       for v in u.neighbours:
-           if v.mark is not scanned:
-               alt = dist[u] + length(u, v)
-               if alt < dist[v]
-                   dist[v]     = alt
-                   previous[v] = u
-                   Q.update(v, alt)
->>>>>>> 996ee4885561eb9765620d6c7df7da90b8fa7658
 
            for w in v.neighbours: 
                d = dist[v] + length(v, w) 
@@ -209,8 +190,8 @@ les tas de Fibonacci, on obtient bien un temps amorti en $O(|E| +
   \begin{center}
     \includegraphics{reg_queue.pdf}
   \end{center}
-  \caption{\label{fig:reg_queue}Tracé de la courbe du temps en fonction de
-    $|E| + |V|\log |V|$ en utilisant un tas simple.
+  \caption{\label{fig:reg_queue}Courbe du temps en fonction de
+    $|E| + |V|^2$ en utilisant un tas simple.
     On constate que tous les points si situent en
     dessous de la droite, ce qui correspond bien à la définition d'un
     temps en $O(|E| + |V|^2)$.}
@@ -219,7 +200,7 @@ les tas de Fibonacci, on obtient bien un temps amorti en $O(|E| +
   \begin{center}
     \includegraphics{reg.pdf}
   \end{center}
-  \caption{\label{fig:reg_fib}Tracé de la courbe du temps en fonction de
+  \caption{\label{fig:reg_fib}Courbe du temps en fonction de
     $|E| + |V|\log |V|$ en utilisant les tas de Fibonacci.
     On constate que tous les points si situent en
     dessous de la droite, ce qui correspond bien à la définition d'un
