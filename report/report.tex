@@ -4,31 +4,30 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{minted}
+\usepackage{hyperref}
 \title{Recherche de chemin --- Algorithme de Dijkstra avec tas de Fibonacci et applications}
 \author{Corentin Cadiou \and Lucas Verney}
 
 \begin{document}
 \maketitle
 Le but de ce projet était de réaliser une implémentation de
-l'algorithme de Dijkstra de recherche de chemin utilisant des tas de
+l'algorithme de Dijkstra de recherche de chemin en utilisant des tas de
 Fibonacci.
 
 Cette implémentation a été réalisée dans le langage C et est détaillée
-dans les Sections~\ref{sec:algor-de-dijkstra} et~\ref{sec:tas-de-fibonacci}. Un ``wrapper''
+dans les Sections~\ref{sec:algor-de-dijkstra} et~\ref{sec:tas-de-fibonacci}. Un ``\emph{wrapper}''
 python3 a été créé pour pouvoir interagir facilement avec
-l'algorithme. Se référer à la
-Section~\ref{sec:expos-des-fonct}. Enfin, un script Python qui
-lit une carte OpenStreetMap, le convertit en un format lisible
-internalement et effectue des recherches dedans.
+l'algorithme, comme détaille dans la Section~\ref{sec:expos-des-fonct}. Enfin, un script Python qui
+lit une carte OpenStreetMap, le convertit en un format d'entrée correct pour notre implémentation et effectue des recherches dedans a été écrit.
 
 \section{Algorithme de Dijkstra}\label{sec:algor-de-dijkstra}
-L'algorithme utilisé a été l'algorithme de Dijkstra. Cet algorithme a
+L'algorithme étudié est l'algorithme de Dijkstra. Cet algorithme a
 une complexité algorithmique de $O(|E| + |V|\log|C|)$ dans le cas
-d'une implémentation avec une queue de prioirité, comme par exemple
+d'une implémentation avec une queue de priorité, comme par exemple
 avec un tas de Fibonacci (ou une queue de Brodal).
 
 Le principe de l'algorithme est de parcourir progressivement tout le
-graphe. On ajoute initialement tous les nœuds associé à une distance
+graphe. On ajoute initialement tous les nœuds associés à une distance
 infinie à une file de priorité. La source est attribuée à une distance
 nulle. On initialise de plus une liste contenant les nœuds déjà visités.
 
@@ -37,21 +36,21 @@ On itère ensuite sur la file de priorité jusqu'à ce qu'elle soit vide.
 est extrait de la file et marqué comme visité.
 Pour tous ses voisins $v$ non déjà visités, on
 calcule la distance du chemin allant de la source $v$ en passant par
-$u$. S'il est plus faible que la distance $v$ à la source sans passer
-par $v$, on met à jour cette distance et on note que le prédecesseur
+$u$. S'il est plus faible que la distance de $v$ à la source sans passer
+par $v$, on met à jour cette distance et on note que le prédécesseur
 de $v$ est $u$.
 
-Une preuve (succinte et partielle) que l'algorithme est correcte est
+Une preuve (succincte et partielle) que l'algorithme est correcte est
 donnée ci-dessous. On peut le prouver en supposant que
 l'itération marque les nœuds visités avec la distance minimale et que
 tous les nœuds non visités sont plus loin que la plus faible des
-distances dans la file de priorité. 
+distances dans la file de priorité.
 À l'itération suivante, un nœud voisin du nœud dans la file le plus
 proche de la source est sélectionné, sa distance est mise à jour. S'il
 devient alors l'élément le plus proche de la source, il ne peut être
 atteint en moins de distance depuis les nœuds visités dans la file
 puisqu'il est plus proche que tous les autres. De même, il n'est pas
-atteignable par un nœud non encore visité par hypothèse. S'il n'est
+atteignable par un nœud non encore visité, par hypothèse. S'il n'est
 pas le plus proche, soit il existe un chemin plus court l'atteignant
 et il sera alors trouvé, soit le chemin proposé initialement était le
 bon et on le saura quand tous les nœuds dans la file seront à une
@@ -66,7 +65,7 @@ On peut implémenter l'algorithme avec une queue supportant les trois
 opérations suivantes :
 \begin{enumerate}
   \item ajout d'une clé (la distance du nœud à la source), avec
-    décoration (le nœud) 
+    décoration (le nœud)
     \mint{python}|add(node, distance)|
   \item mise à jour d'une clé pour un nœud donné
     \mint{python}|add(node, new_distance)|
@@ -76,7 +75,7 @@ opérations suivantes :
 \begin{minted}[linenos,frame=lines]{python}
 def Dijkstra(Graph, source):            # Source is the startpoint of the algorithm
    dist[source] = 0                     # Initialisation
-   for vertex v in Graph:           
+   for vertex v in Graph:
        if v != source:
            dist[v]     = Infinity       # Unknown distance from source to v
            previous[v] = None           # Predecessor of v
@@ -87,7 +86,7 @@ def Dijkstra(Graph, source):            # Source is the startpoint of the algori
        u.mark = scanned
        for v in u.neighbours:
            if v.mark is not scanned:
-               alt = dist[u] + length(u, v) 
+               alt = dist[u] + length(u, v)
                if alt < dist[v]
                    dist[v]     = alt
                    previous[v] = u
@@ -96,16 +95,30 @@ def Dijkstra(Graph, source):            # Source is the startpoint of the algori
    return previous
 \end{minted}
 \section{Tas de Fibonacci}\label{sec:tas-de-fibonacci}
+  Les tas de Fibonacci supportent les mêmes opérations que les tas binomiaux, vus en cours, avec l'avantage que toutes les opérations qui ne nécessitent pas la suppression d'un élément s'exécutent en temps $O(1)$.
+
+  Un tas de Fibonacci est un ensemble d'arbres ordonnées, non triés. Chaque nœud $x$ contient un pointeur \texttt{x.parent} vers son père, \texttt{x.child} vers n'importe lequel de ses fils. Il possède en outre deux pointeurs \texttt{x.left} et \texttt{x.right} vers ses frères gauche et droite respectivement. Tous les enfants d'un nœud forment ainsi une liste circulaire doublement chaînée. Dans le cas particulier d'un fils unique, on a donc \texttt{x.left = x.right = x}.
+
+  Grâce à cette structure de listes circulaires doublement chaînées, un nœud peut être supprimé en temps $O(1)$.
+
+  Enfin, chaque nœud a un dernier champ, en plus des décorations éventuelles liées à notre utilisation, \texttt{x.degre} qui stocke le nombre d'enfants qu'il a.
+
+  Le tas en lui-même comporte deux éléments particuliers : un pointeur sur l'élément minimal, \texttt{fh.min}, et un pointeur sur n'importe laquelle des racines, \texttt{fh.root}. Le pointeur sur l'élément minimal nous permet de trouver le minimum dans le tas en temps $O(1)$. Les racines, comme tous les autres nœuds, sont reliées entre elles dans une liste doublement chaînée.
+
+  Les opérations d'insertion et d'extraction du minimum sont implémentées comme décrites en pseudo-code dans Charles E Leiserson, Ronald L Rivest, Clifford Stein, and Thomas H Cormen. \emph{Introduction to algorithms}. The MIT press, 2001.
+
+  Une opération d'insertion se fait en temps $O(1)$, Une opération d'extraction du minimum se fait en temps $O(D(n))$ où $D(n)$ est un majorant du degré maximal d'un nœud. D'après la référence précédente, celui-ci est borné par $\log_\varphi \left(n\right)$ où $n$ est le nombre total de nœuds dans le tas de Fibonacci, donc l'extraction de l'élément minimal est en $O(\log n)$.
+
 \section{Exposition des fonctionnalités en
   Python}\label{sec:expos-des-fonct}
 Pour rendre l'interaction avec l'algorithme plus aisée ainsi que pour
 profiter des fonctionnalités plus haut niveau de Python, non
 pertinentes d'un point de vue algorithmique (comme la lecture d'un
-fichier XML), un ``wrapper'' python a été écrit en utilisant
-Cython. Ce ``wrapper'' expose une classe python appelée \verb|Graph|
+fichier XML), un ``\emph{wrapper}'' python a été écrit en utilisant
+\texttt{Cython}. Ce ``\emph{wrapper}'' expose une classe python appelée \verb|Graph|
 représentant un graphe et qui donne accès au nombre de nœuds
 (\verb|nb_vertices|), propose une méthode pour ajouter des arêtes
-(\verb|addEdge|) ainsi que d'afficher le graphe, ou les voisins d'un
+(\verb|addEdge|) ainsi que pour afficher le graphe ou les voisins d'un
 nœud (\verb|get|). La méthode appelle en réalité des fonctions C et
 s'occupe uniquement de l'interfaçage entre les deux langages.
 
@@ -115,8 +128,8 @@ tous les outils nécessaires à l'exploitation de l'algorithme. On
 trouvera le code dans l'Annexe~\ref{sec:code-du-wrapper}.
 \section{Application: recherche de chemin vers les transports publics
   les plus proches}\label{sec:appl-rech-de}
-Une fois le ``wrapper'' écrit, il a été possible d'utiliser les
-fonctionnalités haut niveau du python comme la lecture du format XML
+  Une fois le ``\emph{wrapper}'' écrit, il a été possible d'utiliser les
+fonctionnalités haut niveau de Python comme la lecture du format XML
 (pour les cartes OpenStreetMap) et du JSON (pour les requêtes de l'API
 OpenStreetMap pour trouver les adresses).
 
@@ -142,23 +155,23 @@ c'est-à-dire les routes. Celles-ci sont représentées comme suit :
 </way>
 \end{minted}
 Le chemin est formé d'une ligne brisée composée par la succession des nodes.
-Les routes n'ayant pas de \verb|tag| avec la valeur \verb|k='highway'|
+Les routes n'ayant pas de \verb|tag| avec la valeur \verb|k="highway"|
 ne sont pas considérés (ce sont des bâtiments, des monuments, …). Nous
-avons ajouté au graphe chacun des couples successifs de nodes, avec
-comme distance :
+avons ajouté au graphe chacun des couples successifs de \verb|nodes|, avec
+comme distance\footnote{Se référer à l'article Wikipédia correspondant pour plus d'informations sur cette distance : \url{https://en.wikipedia.org/wiki/Haversine_formula}} :
 \begin{align*}
   D & = 2 R_\mathrm{earth}\ \mathrm{atan} \left( \frac{\sqrt{a}}{\sqrt{1-a}} \right) \\
   a & = \left( \frac{\sin(\Delta_\mathrm{lat})}{2} \right)^2 +
       \cos(\mathrm{lat_1})\cos(\mathrm{lat_2}) \left( \frac{\sin(\Delta_\mathrm{lon})}{2} \right)^2
 \end{align*}
 \appendix
-\section{Code du wrapper}\label{sec:code-du-wrapper}
-Le wrapper utilise deux classes, l'une en Cython (lignes 7 à 72) qui
-intéragit directement avec le code C et l'autre en Python pur (lignes
-75 à 109), qui intéragit avec la classe Cython (celle-ci ne permettant
-pas toutes les fonctionnalités du Python). ``from pyjkstra cimport …''
-est une routine Cython qui importe le fichier ``pyjkstra.pxd''
-contenant les headers dans lesquels trouver les fonctions C appelées.
+\section{Code du \emph{wrapper}}\label{sec:code-du-wrapper}
+Le \emph{wrapper} utilise deux classes, l'une en \texttt{Cython} (lignes 7 à 72) qui
+interagit directement avec le code C et l'autre en Python pur (lignes
+75 à 109), qui interagit avec la classe \texttt{Cython} (celle-ci ne permettant
+pas d'utiliser toutes les fonctionnalités de Python). ``\texttt{from pyjkstra cimport …}''
+est une routine \texttt{Cython} qui importe le fichier ``pyjkstra.pxd''
+contenant les \emph{headers} dans lesquels trouver les fonctions C appelées.
 \begin{minted}[linenos,frame=lines]{cython}
 from libc.stdlib cimport malloc, free
 from cpython cimport array
@@ -177,10 +190,10 @@ cdef class c_Graph:
             raise MemoryError
 
     def __dealloc__(self):
-        ''' Free the malloced memory. '''        
+        ''' Free the malloced memory. '''
         if self.thisptr is not NULL:
             freeGraph(self.thisptr)
-        
+
     def __str__(self):
         ''' Print a representation of self.'''
         # Bad hack, it prints but returns an empty string …
@@ -203,7 +216,7 @@ cdef class c_Graph:
 
         cdef int l = self.thisptr.nb_vertices
 
-        # Malloc arrays for return values of the dijkstra algorithm 
+        # Malloc arrays for return values of the dijkstra algorithm
         cdef int* prev_arg = <int*>malloc(sizeof(int)*l)
         cdef double* dist_arg = <double*>malloc(sizeof(double)*l)
 
@@ -218,15 +231,15 @@ cdef class c_Graph:
                 val = None
             else:
                 val = prev_arg[i]
-                
+
             prev_out.append(val)
 
-            
+
             if (dist_arg[i] == INT_MAX):
                 val = None
             else:
                 val = dist_arg[i]
-                
+
             dist_out.append(val)
 
         # Free C arrays
@@ -241,13 +254,13 @@ class Graph:
     def __init__(self, int n):
         ''' n is the number of vertices.'''
         self.c_graph = c_Graph(n)
-        
+
     def __del__(self):
         del self.c_graph
-        
+
     def __str__(self):
         return self.c_graph.__str__()
-    
+
     @property
     def nb_vertices(self):
         return self.c_graph.nb_vertices
@@ -264,7 +277,7 @@ class Graph:
         Parameters:
         G    dijkstra.Graph    a python representation of a graph
         s    int               the starting point of the algorithm
-    
+
         Returns:
         (prev, dist) with prev the antecedent in the path and dist the distance of
         each node from the start
