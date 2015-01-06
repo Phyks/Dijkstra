@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Hybridization of first and second sound in weakly interacting Bose gases - BEC Journal Club</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../reveal.js/css/reveal.min.css">
+		<link rel="stylesheet" href="../reveal.js/css/theme/phyks.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../reveal.js/lib/css/phyks.css">
+
+        <!-- For presentable -->
+        <link rel="stylesheet" href="../reveal.js/plugin/presentable/presentable.min.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="../reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../reveal.js/lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+                    <section>
+                        <h1 style="font-size: 3em;">Algorithme de Dijkstra avec tas de Fibonacci</h1>
+                        <h3>Jeudi 8 janvier 2015</h3>
+                        <h3>Corentin Cadiou, Lucas Verney</h3>
+                    </section>
+                    <section id="summary">
+                        <h2>Sommaire</h2>
+                        <nav id="presentable-toc" class="revealjs"></nav>
+                    </section>
+				</section>
+
+				<section>
+                    <h2 class="presentable-title">Algorithme de Dijkstra</h2>
+                    <p>
+                        <img style="height: 400px; margin-bottom: 0;" src="img/algo.gif" alt="Algo"/>
+                        <br/>
+                        <span class="bibref">Wikipedia</span>
+                    </p>
+				</section>
+
+                <section>
+                    <h2 class="presentable-title">Tas de Fibonacci</h2>
+
+                </section>
+
+				<section>
+                    <section>
+                        <h2 class="presentable-title">Implémentation</h2>
+
+                        <h3>Dijkstra</h3>
+                    </section>
+                    <section>
+                        <h3>Tas de Fibonacci</h3>
+                    </section>
+                    <section>
+                        <h3>Débogage</h3>
+
+                        <ul style="display: block;">
+                            <li>Valgrind
+                                <ul>
+                                    <li>Fuites mémoires</li>
+                                    <li>Débogage des allocations dynamiques</li>
+                                    <li><em>Traceback</em></li>
+                                </ul>
+                            </li>
+                            <li style="margin-top: 2em;">GDB
+                                <ul>
+                                    <li>Inspection de la mémoire</li>
+                                    <li>Débogage pas à pas</li>
+                                    <li>Intégration avec Emacs</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </section>
+                </section>
+
+				<section>
+                    <section>
+                        <h2 class="presentable-title">Exemple</h2>
+
+                        <p>
+                            <img style="height: 400px; margin-bottom: 0;" src="img/exemple.png" alt="Exemple"/>
+                        </p>
+                    </section>
+                    <section>
+                        <h3>Performances</h3>
+
+                        <p>
+                            <img style="height: 300px; margin-bottom: 0;" src="img/reg.png" alt="Regression avec Fibonacci"/>
+                            <img style="height: 300px; margin-top: 150px; float:right;" src="img/reg_queue.png" alt="Regression avec queue"/>
+                        </p>
+                    </section>
+				</section>
+
+                <section>
+                    <section>
+                        <h2 class="presentable-title">Données OSM</h2>
+                        <ul>
+                            <li>Utilisation d'un <em>wrapper</em> <code>Python</code> autour de notre implémentation en <code>C</code>.
+                                <ul style="font-size: 0.8em;">
+                                    <li>import plus simple des données OSM.</li>
+                                    <li>performances équivalentes.</li>
+                                </ul>
+                            </li>
+                            <li style="margin-top: 0.5em;">
+                                Format de fichier OSM
+                                <ul style="font-size: 0.8em;">
+                                    <li>Nœuds<br/>
+                                        <pre><code data-trim>&lt;node id=&quot;703217417&quot; lat=&quot;48.8445203&quot; lon=&quot;2.3439455&quot; … /&gt;</code></pre>
+                                    </li>
+                                    <li>Routes<br/>
+                                        <pre><code data-trim>&lt;way id=&quot;4217181&quot; visible=&quot;true&quot; …&gt;
+    &lt;nd ref=&quot;25033471&quot;/&gt; &lt;!-- Intersection rue d&#39;Ulm, rue &#201;rasme --&gt;
+    &lt;nd ref=&quot;25033484&quot;/&gt;
+    &lt;nd ref=&quot;25033485&quot;/&gt;
+    &lt;tag k=&quot;highway&quot; v=&quot;residential&quot;/&gt;
+    &lt;tag k=&quot;name&quot; v=&quot;Rue &#201;rasme&quot;/&gt;
+&lt;/way&gt;
+                                        </code></pre>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li style="margin-top: 0.5em;">Courbure prise en compte pour les distances.</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Code Python</h3>
+
+                        <pre><code data-trim>from xml.etree import ElementTree as et
+import pyjkstra
+import api_request as ar
+
+lat, lon, start = ar.coordinates(address)
+transports = ar.nearestTransport(lat, lon, 500, -1)
+nodes = ar.nearestRoad(lat, lon, radius=10, number_to_get=2)
+
+# create an osmMap object
+osm = osmMap(sys.argv[1])
+graph = pyjkstra.Graph(len(osm.nodes))
+
+# Fill it with data from the map
+print("Filling graph…")
+osm.parse(…)
+
+prev, dist = graph.dijkstra(…)
+</code></pre>
+                    </section>
+                </section>
+
+				<section>
+					<h2>Conclusion</h2>
+                    <ul>
+                        <li></li>
+                    </ul>
+                </section>
+			</div>
+		</div>
+
+		<script src="../reveal.js/lib/js/head.min.js"></script>
+		<script src="../reveal.js/js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+                // Controls in bottom right corner => customized in css to only display down arrow if enabled, in the bottom left corner
+				controls: true,
+                // Display status bar
+				progress: true,
+                // Display slide number
+                slideNumber: true,
+                // Push each slide to browser history
+				history: true,
+                // Enable keyboard shortcuts for navigation
+                keyboard: true,
+                //Enable the slide overview mode
+                overview: true,
+                // Vertical centering of slides
+                center: false,
+                // Typographically correct output
+                smart: true,
+                // Enables touch navigation on devices with touch input
+                touch: true,
+                // Don't loop the presentation
+                loop: false,
+                // Turn on fragments
+                fragments: true,
+                // Enable slide navigation by mouse wheel
+                mouseWheel: true,
+                // Hides the address bar on mobile devices
+                hideAddressBar: true,
+                // Don't open links in an iframe preview overlay
+                previewLinks: false,
+                // Transition style : default / cube / page / concave / zoom / linear / fade / none
+                transition: 'linear',
+                // Transition speed : default / fast / slow
+                transitionSpeed: 'default',
+                // Transition style for full page slide backgrounds : default / none / slide / concave / convex / zoom
+                backgroundTransition: 'default',
+                // Number of slides away from the current that are visible
+                viewDistance: 5,
+                // Parallax background image
+                parallaxBackgroundImage: '',
+                // Parallax background size
+                parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
+                // Theme to use
+				theme: 'phyks',
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+                    // Cross-browser shim that fully implements classList
+					{ src: '../reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    // Markdown support
+					{ src: '../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    // Syntax highlight for <code> element
+					{ src: '../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    // Zoom in and out with Alt+click
+					{ src: '../reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    // Speaker notes
+					{ src: '../reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+                    // Remote control your reveal.js presentation using a touch device
+                    // { src: '../reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
+                    // MathJax
+                    { src: '../reveal.js/plugin/math/math.js', async: true },
+                    // Presentable
+                    { src: '../reveal.js/plugin/presentable/presentable.min.js', callback: function() { presentable.toc({framework: "revealjs",  titles: '.presentable-title', keyCode: 84, hideNoTitle: true }); } }
+				],
+                // "Normal" default size of the presentation
+                // 800x600 since it is the lowest resolution available on videoprojectors
+                width: 800,
+                height: 600,
+                // Factor of the display size that should remain empty around the content
+                margin: 0.15,
+                math: {
+                    mathjax: '../reveal.js/plugin/math/mathjax/MathJax.js',
+                    config: 'TeX-AMS_HTML-full'
+                },
+			});
+
+            Reveal.indexh = 1;
+
+            Reveal.configure({
+                keyboard: {
+                    13: 'next', // go to the next slide when the ENTER key is pressed
+                }
+            });
+		</script>
+	</body>
+</html>
