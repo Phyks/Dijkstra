@@ -70,9 +70,47 @@
                         <h2 class="presentable-title">Implémentation</h2>
 
                         <h3>Dijkstra</h3>
+                        <pre><code data-trim>function Dijkstra(G, v, s)
+  ds[s] ← 0
+  v.seen = True
+  for all arc a sortant de s do
+    longueur ← ds[s] + wa
+    P.insert(a, longueur)
+  end for
+  while P.not_empty() do
+    (u, v), poids ← P.extract_min()
+    if not v.seen then
+      s(v) ← poids
+      v.seen = True
+      for all arc a sortant de v do
+        longueur ← ds[u] + wa
+        P.insert(a, longueur)
+      end for
+    end if
+  end while
+end function</code></pre>
                     </section>
                     <section>
                         <h3>Tas de Fibonacci</h3>
+                        <pre><code data-trim>
+typedef struct fibonacci_heap_element {
+  struct fibonacci_heap_element *parent;
+  struct fibonacci_heap_element *child;
+  struct fibonacci_heap_element *left;
+  struct fibonacci_heap_element *right;
+  int degree;
+  float key;
+  /* Decoration */
+  int from;
+  int to;
+} fibonacci_heap_element_t;
+
+typedef struct fibonacci_heap {
+  int nb_nodes;
+  fibonacci_heap_element_t *min;
+  fibonacci_heap_element_t *root;
+} fibonacci_heap_t;
+</code></pre>
                     </section>
                     <section>
                         <h3>Débogage</h3>
